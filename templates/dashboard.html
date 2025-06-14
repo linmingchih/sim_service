@@ -1,61 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-9ndCyUa6zs+Qp+Phu5c5q3zY9EpoIdST+Vk0c/1rZV+GXKxTh7lQmftTFJ2aq2HE" crossorigin="anonymous">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-<nav class="navbar navbar-light bg-light">
-  <div class="container">
-    <span class="navbar-text">Welcome, {{ current_user.username }}!</span>
-    <a class="btn btn-outline-secondary" href="{{ url_for('logout') }}">Logout</a>
-  </div>
-</nav>
-<div class="container mt-5">
-  <h1 class="mb-4">Dashboard</h1>
-  {% set has_running = tasks|selectattr('task.status', 'equalto', 'RUNNING')|list|length > 0 %}
-  {% if has_running %}
-  <script>
-    // auto-refresh only the jobs section every 5s while tasks are running
-    (function refreshJobs(){
-      fetch("{{ url_for('dashboard_jobs') }}")
-        .then(resp => resp.text())
-        .then(html => {
-          const section = document.getElementById("jobs-section");
-          section.innerHTML = html;
-          if (html.indexOf(">RUNNING<") !== -1) {
-            setTimeout(refreshJobs, 5000);
-          }
-        });
-    })();
-  </script>
-  {% endif %}
-
-  <h2>Submit a new task</h2>
-  <div class="mb-4">
-    {% for key, cfg in configs.items() %}
-    <form action="{{ url_for('submit_task', task_type=key) }}" method="post" class="d-inline-block me-3">
-      <div class="input-group">
-        {% if key == 'fractal' %}
-        <input type="number" name="depth" class="form-control" min="0" placeholder="Depth" required>
-        {% elif key == 'primes' %}
-        <input type="number" name="n" class="form-control" min="2" placeholder="N" required>
-        {% endif %}
-        <button class="btn btn-primary" type="submit">Submit {{ key|capitalize }}</button>
-      </div>
-    </form>
-    {% endfor %}
-  </div>
-
-  <div id="jobs-section">
-    {% include '_jobs_table.html' %}
-  </div>
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1 class="mb-4">Dashboard</h1>
+{% set has_running = tasks|selectattr('task.status', 'equalto', 'RUNNING')|list|length > 0 %}
+{% if has_running %}
+<script>
+  (function refreshJobs(){
+    fetch("{{ url_for('dashboard_jobs') }}")
+      .then(resp => resp.text())
+      .then(html => {
+        const section = document.getElementById("jobs-section");
+        section.innerHTML = html;
+        if (html.indexOf(">RUNNING<") !== -1) {
+          setTimeout(refreshJobs, 5000);
+        }
+      });
+  })();
+</script>
+{% endif %}
+<h2>Submit a new task</h2>
+<div class="mb-4">
+  {% for key, cfg in configs.items() %}
+  <form action="{{ url_for('submit_task', task_type=key) }}" method="post" class="d-inline-block me-3">
+    <div class="input-group">
+      {% if key == 'fractal' %}
+      <input type="number" name="depth" class="form-control" min="0" placeholder="Depth" required>
+      {% elif key == 'primes' %}
+      <input type="number" name="n" class="form-control" min="2" placeholder="N" required>
+      {% endif %}
+      <button class="btn btn-primary" type="submit">Submit {{ key|capitalize }}</button>
+    </div>
+  </form>
+  {% endfor %}
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTI+Edqh19V8tOff8ri+mvvvGhOA8VUylrMZPZhld+8okv" crossorigin="anonymous"></script>
-</body>
-</html>
+<div id="jobs-section">
+  {% include '_jobs_table.html' %}
+</div>
+{% endblock %}

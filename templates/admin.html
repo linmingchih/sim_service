@@ -1,81 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin Panel</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-9ndCyUa6zs+Qp+Phu5c5q3zY9EpoIdST+Vk0c/1rZV+GXKxTh7lQmftTFJ2aq2HE" crossorigin="anonymous">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-<nav class="navbar navbar-dark bg-dark">
-  <div class="container">
-    <span class="navbar-brand">Admin Panel</span>
-    <span class="navbar-text text-light">{{ current_user.username }}</span>
-    <a class="btn btn-outline-light" href="{{ url_for('logout') }}">Logout</a>
-  </div>
-</nav>
-<div class="container my-5">
-  <form method="get" action="{{ url_for('admin') }}" class="input-group mb-4">
-    <input type="text" name="q" class="form-control" placeholder="Search tasks" value="{{ q }}">
-    <button class="btn btn-primary" type="submit">Search</button>
-  </form>
-
-  <h2>Users</h2>
-  <table class="table table-bordered mb-4">
-    <thead><tr><th>Username</th><th>Is Admin</th><th>Task Count</th></tr></thead>
-    <tbody>
-      {% for u in users %}
-      <tr>
-        <td>{{ u.username }}</td>
-        <td>{{ 'Yes' if u.is_admin else 'No' }}</td>
-        <td>{{ u.tasks | length }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <h2>Task Statistics</h2>
-  <table class="table table-bordered mb-4">
-    <thead><tr><th>Type</th><th>Count</th><th>Success Rate (%)</th><th>Avg Time (s)</th></tr></thead>
-    <tbody>
-      {% for type, stat in stats.items() %}
-      <tr>
-        <td>{{ type }}</td>
-        <td>{{ stat.count }}</td>
-        <td>{{ stat.success_rate }}</td>
-        <td>{{ stat.avg_time }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <h2>All Tasks</h2>
-  <table class="table table-bordered">
-    <thead><tr><th>ID</th><th>User</th><th>Type</th><th>Status</th><th>Submitted</th><th>Archived</th><th>Action</th></tr></thead>
-    <tbody>
-      {% for t in tasks %}
-      <tr>
-        <td>{{ t.id }}</td>
-        <td>{{ t.user.username }}</td>
-        <td>{{ t.task_type }}</td>
-        <td>{{ t.status }}</td>
-        <td>{{ t.create_time }}</td>
-        <td>{{ 'Yes' if t.archived else 'No' }}</td>
-        <td>
-          {% if not t.archived %}
-          <form method="post" action="{{ url_for('archive_task', task_id=t.id) }}" class="d-inline">
-            <button class="btn btn-sm btn-warning" type="submit">Archive</button>
-          </form>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTI+Edqh19V8tOff8ri+mvvvGhOA8VUylrMZPZhld+8okv" crossorigin="anonymous"></script>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Admin Panel{% endblock %}
+{% block content %}
+<form method="get" action="{{ url_for('admin') }}" class="input-group mb-4">
+  <input type="text" name="q" class="form-control" placeholder="Search tasks" value="{{ q }}">
+  <button class="btn btn-primary" type="submit">Search</button>
+</form>
+<h2>Users</h2>
+<table class="table table-bordered mb-4">
+  <thead><tr><th>Username</th><th>Is Admin</th><th>Task Count</th></tr></thead>
+  <tbody>
+    {% for u in users %}
+    <tr>
+      <td>{{ u.username }}</td>
+      <td>{{ 'Yes' if u.is_admin else 'No' }}</td>
+      <td>{{ u.tasks | length }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<h2>Task Statistics</h2>
+<table class="table table-bordered mb-4">
+  <thead><tr><th>Type</th><th>Count</th><th>Success Rate (%)</th><th>Avg Time (s)</th></tr></thead>
+  <tbody>
+    {% for type, stat in stats.items() %}
+    <tr>
+      <td>{{ type }}</td>
+      <td>{{ stat.count }}</td>
+      <td>{{ stat.success_rate }}</td>
+      <td>{{ stat.avg_time }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<h2>All Tasks</h2>
+<table class="table table-bordered">
+  <thead><tr><th>ID</th><th>User</th><th>Type</th><th>Status</th><th>Submitted</th><th>Archived</th><th>Action</th></tr></thead>
+  <tbody>
+    {% for t in tasks %}
+    <tr>
+      <td>{{ t.id }}</td>
+      <td>{{ t.user.username }}</td>
+      <td>{{ t.task_type }}</td>
+      <td>{{ t.status }}</td>
+      <td>{{ t.create_time }}</td>
+      <td>{{ 'Yes' if t.archived else 'No' }}</td>
+      <td>
+        {% if not t.archived %}
+        <form method="post" action="{{ url_for('archive_task', task_id=t.id) }}" class="d-inline">
+          <button class="btn btn-sm btn-warning" type="submit">Archive</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
