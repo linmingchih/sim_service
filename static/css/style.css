@@ -1,0 +1,21 @@
+/* Basic styling for Flask Task Platform */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+}
+table, th, td {
+    border: 1px solid #ccc;
+}
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+.flashes {
+    color: red;
+    list-style: none;
+}
