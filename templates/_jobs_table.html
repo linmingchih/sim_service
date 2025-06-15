@@ -5,7 +5,7 @@
 <h2>Your tasks</h2>
 <table class="table table-striped">
   <thead>
-    <tr><th>ID</th><th>Type</th><th>Parameters</th><th>Status</th><th>Submitted</th><th>Result Files</th><th>Action</th></tr>
+    <tr><th>ID</th><th>Type</th><th>Parameters</th><th>Status</th><th>Submitted</th><th>Result</th><th>Action</th></tr>
   </thead>
   <tbody>
     {% for item in tasks %}
@@ -16,9 +16,13 @@
       <td class="text-{{ item.task.status|status_color }}">{{ item.task.status }}</td>
       <td>{{ item.task.create_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
       <td>
-        {% for filename in item.files %}
-        <a class="link-primary" href="{{ url_for('user.download_file', task_id=item.task.id, filename=filename) }}">{{ filename }}</a><br>
-        {% endfor %}
+        {% if item.html_file %}
+        <a class="link-primary" href="{{ url_for('user.view_file', task_id=item.task.id, filename=item.html_file) }}">{{ item.html_file }}</a>
+        {% else %}
+          {% for filename in item.files %}
+          <a class="link-primary" href="{{ url_for('user.download_file', task_id=item.task.id, filename=filename) }}">{{ filename }}</a><br>
+          {% endfor %}
+        {% endif %}
       </td>
       <td>
         <form method="post" action="{{ url_for('user.delete_task', task_id=item.task.id) }}" class="d-inline" onsubmit="return confirm('Delete this task?');">
