@@ -21,16 +21,7 @@
 <h2>Submit a new task</h2>
 <div class="mb-4">
   {% for key, cfg in configs.items() %}
-  <form action="{{ url_for('submit_task', task_type=key) }}" method="post" class="d-inline-block me-3">
-    <div class="input-group">
-      {% if key == 'fractal' %}
-      <input type="number" name="depth" class="form-control" min="0" placeholder="Depth" required>
-      {% elif key == 'primes' %}
-      <input type="number" name="n" class="form-control" min="2" placeholder="N" required>
-      {% endif %}
-      <button class="btn btn-primary" type="submit">Submit {{ key|capitalize }}</button>
-    </div>
-  </form>
+  <a class="btn btn-primary me-3" href="{{ url_for('task_detail', task_type=key) }}">{{ key|capitalize }} App</a>
   {% endfor %}
 </div>
 <div id="jobs-section">
