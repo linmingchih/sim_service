@@ -30,7 +30,7 @@ def main(input_file):
             plt.close(fig)
             plot_files.append((fname, title))
 
-    # Build simple HTML with 4-column grid and regex search
+    # Build simple HTML with 4-column grid and simple filter rules
     html_parts = [
         '<!DOCTYPE html>',
         '<html>',
@@ -44,31 +44,57 @@ def main(input_file):
         '</style>',
         '</head>',
         '<body>',
-        '<input type="text" id="search" placeholder="Regex filter">',
+        f'<input type="text" id="search" placeholder="e.g., S(m,m);S(m,m+3)">',
         '<div class="grid" id="plots">'
     ]
     for fname, title in plot_files:
         name = os.path.splitext(fname)[0]
+        i_val, j_val = title[2:-1].split(',')
         html_parts.append(
-            f'<div class="plot" data-title="{title}">'
+            f'<div class="plot" data-title="{title}" data-i="{i_val}" data-j="{j_val}">' 
             f'<a href="{fname}" target="_blank"><img src="{fname}" alt="{name}"></a>'
             f'</div>'
         )
     html_parts.extend([
         '</div>',
         '<script>',
+        f'const nports={nports};',
         'const search=document.getElementById("search");',
-        'search.addEventListener("input",()=>{',
-        ' let re;',
-        ' try {',
-        '  re=new RegExp(search.value||".","i");',
-        ' } catch(e){',
-        '  re=/.^/;',
+        'function evalExpr(expr,m){',
+        ' if(expr==="m") return m;',
+        ' let mt=expr.match(/^m\\+(\\d+)$/);',
+        ' if(mt) return m+parseInt(mt[1]);',
+        ' mt=expr.match(/^(\\d+)\\+m$/);',
+        ' if(mt) return m+parseInt(mt[1]);',
+        ' let num=parseInt(expr,10);',
+        ' return isNaN(num)?NaN:num;',
+        '}',
+        'function matchRule(i,j,rule){',
+        ' const terms=rule.split(";").map(s=>s.trim()).filter(Boolean);',
+        ' if(!terms.length) return true;',
+        ' for(const t of terms){',
+        '  const m=t.match(/^S\\(([^,]+),([^\\)]+)\\)$/i);',
+        '  if(!m) continue;',
+        '  const left=m[1].trim();',
+        '  const right=m[2].trim();',
+        '  for(let v=1; v<=nports; v++){',
+        '   const a=evalExpr(left,v);',
+        '   const b=evalExpr(right,v);',
+        '   if(a===i && b===j) return true;',
+        '  }',
         ' }',
+        ' return false;',
+        '}',
+        'function applyFilter(){',
+        ' const rule=search.value;',
         ' document.querySelectorAll(".plot").forEach(p=>{',
-        '  p.style.display=re.test(p.dataset.title)?"":"none";',
+        '  const i=parseInt(p.dataset.i,10);',
+        '  const j=parseInt(p.dataset.j,10);',
+        '  p.style.display=matchRule(i,j,rule)?"":"none";',
         ' });',
-        '});',
+        '}',
+        'search.addEventListener("input",applyFilter);',
+        'applyFilter();',
         '</script>',
         '</body>',
         '</html>'
