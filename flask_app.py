@@ -102,7 +102,9 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    return redirect(url_for('dashboard')) if current_user.is_authenticated else redirect(url_for('login'))
+    if current_user.is_authenticated:
+        return redirect(url_for('admin_tasks')) if current_user.is_admin else redirect(url_for('dashboard'))
+    return redirect(url_for('login'))
 
 
 
@@ -110,14 +112,14 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('admin_tasks')) if current_user.is_admin else redirect(url_for('dashboard'))
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('admin_tasks')) if user.is_admin else redirect(url_for('dashboard'))
         flash('Invalid username or password')
     return render_template('login.html')
 
@@ -132,6 +134,8 @@ def logout():
 @app.route('/task/<task_type>')
 @login_required
 def task_detail(task_type):
+    if current_user.is_admin:
+        return redirect(url_for('admin_tasks'))
     configs = load_config()
     if task_type not in configs:
         abort(404)
@@ -144,6 +148,8 @@ def task_detail(task_type):
 @app.route('/dashboard')
 @login_required
 def dashboard():
+    if current_user.is_admin:
+        return redirect(url_for('admin_tasks'))
     configs = load_config()
     tasks_query = Task.query.filter_by(
         user_id=current_user.id,
@@ -159,6 +165,8 @@ def dashboard():
 @app.route('/dashboard/jobs')
 @login_required
 def dashboard_jobs():
+    if current_user.is_admin:
+        return redirect(url_for('admin_tasks'))
     configs = load_config()
     tasks_query = Task.query.filter_by(
         user_id=current_user.id,
@@ -174,6 +182,8 @@ def dashboard_jobs():
 @app.route('/submit/<task_type>', methods=['POST'])
 @login_required
 def submit_task(task_type):
+    if current_user.is_admin:
+        return redirect(url_for('admin_tasks'))
     configs = load_config()
     if task_type not in configs:
         abort(404)
