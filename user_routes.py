@@ -18,21 +18,21 @@ user_bp = Blueprint('user', __name__)
 @user_bp.route('/', endpoint='index')
 def index():
     if current_user.is_authenticated:
-        return redirect(url_for('admin_tasks')) if current_user.is_admin else redirect(url_for('dashboard'))
+        return redirect(url_for('admin.admin_tasks')) if current_user.is_admin else redirect(url_for('user.dashboard'))
     return redirect(url_for('login'))
 
 
 @user_bp.route('/login', methods=['GET', 'POST'], endpoint='login')
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('admin_tasks')) if current_user.is_admin else redirect(url_for('dashboard'))
+        return redirect(url_for('admin.admin_tasks')) if current_user.is_admin else redirect(url_for('user.dashboard'))
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
-            return redirect(url_for('admin_tasks')) if user.is_admin else redirect(url_for('dashboard'))
+            return redirect(url_for('admin.admin_tasks')) if user.is_admin else redirect(url_for('user.dashboard'))
         flash('Invalid username or password')
     return render_template('login.html')
 
@@ -48,7 +48,7 @@ def logout():
 @login_required
 def task_detail(task_type):
     if current_user.is_admin:
-        return redirect(url_for('admin_tasks'))
+        return redirect(url_for('admin.admin_tasks'))
     configs = load_config()
     if task_type not in configs:
         abort(404)
@@ -60,7 +60,7 @@ def task_detail(task_type):
 @login_required
 def dashboard():
     if current_user.is_admin:
-        return redirect(url_for('admin_tasks'))
+        return redirect(url_for('admin.admin_tasks'))
     configs = load_config()
     tasks_query = Task.query.filter_by(
         user_id=current_user.id,
@@ -77,7 +77,7 @@ def dashboard():
 @login_required
 def dashboard_jobs():
     if current_user.is_admin:
-        return redirect(url_for('admin_tasks'))
+        return redirect(url_for('admin.admin_tasks'))
     configs = load_config()
     tasks_query = Task.query.filter_by(
         user_id=current_user.id,
@@ -94,7 +94,7 @@ def dashboard_jobs():
 @login_required
 def submit_task(task_type):
     if current_user.is_admin:
-        return redirect(url_for('admin_tasks'))
+        return redirect(url_for('admin.admin_tasks'))
     configs = load_config()
     if task_type not in configs:
         abort(404)

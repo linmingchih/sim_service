@@ -2,8 +2,8 @@
 {% block title %}Task Statistics{% endblock %}
 {% block content %}
 <h1 class="mb-4">Task Statistics</h1>
-<a class="btn btn-outline-primary mb-3" href="{{ url_for('admin_users') }}">Manage Users</a>
-<form method="get" action="{{ url_for('admin_tasks') }}" class="input-group mb-4">
+<a class="btn btn-outline-primary mb-3" href="{{ url_for('admin.admin_users') }}">Manage Users</a>
+<form method="get" action="{{ url_for('admin.admin_tasks') }}" class="input-group mb-4">
   <input type="text" name="q" class="form-control" placeholder="Search tasks" value="{{ q }}">
   <button class="btn btn-primary" type="submit">Search</button>
 </form>
@@ -35,7 +35,7 @@
       <td>{{ 'Yes' if t.archived else 'No' }}</td>
       <td>
         {% if not t.archived %}
-        <form method="post" action="{{ url_for('archive_task', task_id=t.id) }}" class="d-inline">
+        <form method="post" action="{{ url_for('admin.archive_task', task_id=t.id) }}" class="d-inline">
           <button class="btn btn-sm btn-warning" type="submit">Archive</button>
         </form>
         {% endif %}

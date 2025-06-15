@@ -15,7 +15,7 @@ admin_bp = Blueprint('admin', __name__)
 @login_required
 def admin():
     """Redirect /admin to the task statistics page."""
-    return redirect(url_for('admin_tasks'))
+    return redirect(url_for('admin.admin_tasks'))
 
 
 @admin_bp.route('/admin/tasks', endpoint='admin_tasks')
@@ -76,7 +76,7 @@ def archive_task(task_id):
     task = Task.query.get_or_404(task_id)
     task.archived = True
     db.session.commit()
-    return redirect(url_for('admin_tasks'))
+    return redirect(url_for('admin.admin_tasks'))
 
 
 @admin_bp.route('/admin/users/add', methods=['POST'], endpoint='add_user')
@@ -94,10 +94,10 @@ def add_user():
     is_admin_flag = bool(request.form.get('is_admin'))
     if not username or not password:
         flash('Username and password are required')
-        return redirect(url_for('admin_users'))
+        return redirect(url_for('admin.admin_users'))
     if User.query.filter_by(username=username).first():
         flash('Username already exists')
-        return redirect(url_for('admin_users'))
+        return redirect(url_for('admin.admin_users'))
     user = User(
         username=username,
         password_hash=generate_password_hash(password),
@@ -110,7 +110,7 @@ def add_user():
     db.session.add(user)
     db.session.commit()
     flash('User added')
-    return redirect(url_for('admin_users'))
+    return redirect(url_for('admin.admin_users'))
 
 
 @admin_bp.route('/admin/users/edit/<int:user_id>', methods=['GET', 'POST'], endpoint='edit_user')
@@ -132,7 +132,7 @@ def edit_user(user_id):
         user.is_admin = bool(request.form.get('is_admin'))
         db.session.commit()
         flash('User updated')
-        return redirect(url_for('admin_users'))
+        return redirect(url_for('admin.admin_users'))
     return render_template('edit_user.html', user=user)
 
 
@@ -145,8 +145,8 @@ def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     if user.username == 'admin':
         flash('Cannot delete admin user')
-        return redirect(url_for('admin_users'))
+        return redirect(url_for('admin.admin_users'))
     db.session.delete(user)
     db.session.commit()
     flash('User deleted')
-    return redirect(url_for('admin_users'))
+    return redirect(url_for('admin.admin_users'))

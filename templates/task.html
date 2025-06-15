@@ -3,7 +3,7 @@
 {% block content %}
 <h1 class="mb-4">{{ task_type|capitalize }} Application</h1>
 <p>{{ description }}</p>
-<form action="{{ url_for('submit_task', task_type=task_type) }}" method="post" class="mt-3">
+<form action="{{ url_for('user.submit_task', task_type=task_type) }}" method="post" class="mt-3">
   <div class="mb-3">
     {% if task_type == 'fractal' %}
     <label class="form-label">Depth</label>

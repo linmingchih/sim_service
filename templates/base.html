@@ -10,13 +10,13 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container">
-    <a class="navbar-brand" href="{{ url_for('index') }}">Task Platform</a>
+    <a class="navbar-brand" href="{{ url_for('user.index') }}">Task Platform</a>
     <div class="ms-auto">
       {% if current_user.is_authenticated %}
       <span class="navbar-text me-3">{{ current_user.username }}</span>
-      <a class="btn btn-outline-secondary" href="{{ url_for('logout') }}">Logout</a>
+      <a class="btn btn-outline-secondary" href="{{ url_for('user.logout') }}">Logout</a>
       {% else %}
-      <a class="btn btn-outline-primary" href="{{ url_for('login') }}">Login</a>
+      <a class="btn btn-outline-primary" href="{{ url_for('user.login') }}">Login</a>
       {% endif %}
     </div>
   </div>

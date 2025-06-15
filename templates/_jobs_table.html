@@ -17,11 +17,11 @@
       <td>{{ item.task.create_time }}</td>
       <td>
         {% for filename in item.files %}
-        <a class="link-primary" href="{{ url_for('download_file', task_id=item.task.id, filename=filename) }}">{{ filename }}</a><br>
+        <a class="link-primary" href="{{ url_for('user.download_file', task_id=item.task.id, filename=filename) }}">{{ filename }}</a><br>
         {% endfor %}
       </td>
       <td>
-        <form method="post" action="{{ url_for('delete_task', task_id=item.task.id) }}" class="d-inline" onsubmit="return confirm('Delete this task?');">
+        <form method="post" action="{{ url_for('user.delete_task', task_id=item.task.id) }}" class="d-inline" onsubmit="return confirm('Delete this task?');">
           <button class="btn btn-sm btn-danger" type="submit">Delete</button>
         </form>
       </td>
@@ -30,5 +30,5 @@
   </tbody>
 </table>
 {% if current_user.is_admin %}
-<a class="btn btn-outline-secondary" href="{{ url_for('admin_tasks') }}">Admin Panel</a>
+<a class="btn btn-outline-secondary" href="{{ url_for('admin.admin_tasks') }}">Admin Panel</a>
 {% endif %}
