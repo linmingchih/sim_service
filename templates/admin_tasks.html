@@ -31,7 +31,7 @@
       <td>{{ t.user.username }}</td>
       <td>{{ t.task_type }}</td>
       <td class="text-{{ t.status|status_color }}">{{ t.status }}</td>
-      <td>{{ t.create_time }}</td>
+      <td>{{ t.create_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
       <td>{{ 'Yes' if t.archived else 'No' }}</td>
       <td>
         {% if not t.archived %}
