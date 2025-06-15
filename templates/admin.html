@@ -10,6 +10,10 @@
   <thead>
     <tr>
       <th>Username</th>
+      <th>Real Name</th>
+      <th>Department</th>
+      <th>Email</th>
+      <th>Phone</th>
       <th>Is Admin</th>
       <th>Task Count</th>
       <th>Success Rate (%)</th>
@@ -20,11 +24,16 @@
     {% for u in users %}
     <tr>
       <td>{{ u.username }}</td>
+      <td>{{ u.real_name }}</td>
+      <td>{{ u.department }}</td>
+      <td>{{ u.email }}</td>
+      <td>{{ u.phone }}</td>
       <td>{{ 'Yes' if u.is_admin else 'No' }}</td>
       <td>{{ user_stats[u.id].total }}</td>
       <td>{{ user_stats[u.id].success_rate }}</td>
       <td>
         {% if u.username != 'admin' %}
+        <a class="btn btn-sm btn-secondary" href="{{ url_for('edit_user', user_id=u.id) }}">Edit</a>
         <form method="post" action="{{ url_for('delete_user', user_id=u.id) }}" class="d-inline">
           <button class="btn btn-sm btn-danger" type="submit">Delete</button>
         </form>
@@ -44,6 +53,22 @@
   <div class="mb-3">
     <label class="form-label">Password</label>
     <input type="password" name="password" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Real Name</label>
+    <input type="text" name="real_name" class="form-control">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Department</label>
+    <input type="text" name="department" class="form-control">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Email</label>
+    <input type="email" name="email" class="form-control">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Phone</label>
+    <input type="text" name="phone" class="form-control">
   </div>
   <div class="form-check mb-3">
     <input class="form-check-input" type="checkbox" name="is_admin" id="is_admin">
