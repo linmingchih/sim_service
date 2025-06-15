@@ -24,6 +24,25 @@ def load_config():
         return yaml.safe_load(f)
 
 
+def get_task_description(task_type):
+    """Return the module level docstring from a task's script."""
+    configs = load_config()
+    conf = configs.get(task_type)
+    if not conf:
+        return ''
+    script_rel = conf.get('script_path')
+    if not script_rel:
+        return ''
+    script_path = os.path.join(app.root_path, script_rel)
+    try:
+        import ast
+        with open(script_path, 'r') as f:
+            module = ast.parse(f.read())
+        return ast.get_docstring(module) or ''
+    except FileNotFoundError:
+        return ''
+
+
 app = Flask(__name__)
 # Secret key for session management; override in environment for production
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'replace-this-secret')
@@ -112,6 +131,18 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+
+@app.route('/task/<task_type>')
+@login_required
+def task_detail(task_type):
+    configs = load_config()
+    if task_type not in configs:
+        abort(404)
+    description = get_task_description(task_type)
+    return render_template('task.html',
+                           task_type=task_type,
+                           description=description)
 
 
 @app.route('/dashboard')
