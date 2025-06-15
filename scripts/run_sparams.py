@@ -21,13 +21,14 @@ def main(input_file):
             ax.plot(freqs, mag, color='red')
             ax.set_xlabel('Frequency (Hz)')
             ax.set_ylabel('Magnitude (dB)')
-            ax.set_title(f'S{i+1}{j+1}')
+            title = f'S({i + 1},{j + 1})'
+            ax.set_title(title)
             ax.grid(True)
             fig.tight_layout()
-            fname = f'S{i+1}{j+1}.png'
+            fname = f'S_{i + 1}_{j + 1}.png'
             fig.savefig(fname)
             plt.close(fig)
-            plot_files.append(fname)
+            plot_files.append((fname, title))
 
     # Build simple HTML with 4-column grid and regex search
     html_parts = [
@@ -46,10 +47,10 @@ def main(input_file):
         '<input type="text" id="search" placeholder="Regex filter">',
         '<div class="grid" id="plots">'
     ]
-    for fname in plot_files:
+    for fname, title in plot_files:
         name = os.path.splitext(fname)[0]
         html_parts.append(
-            f'<div class="plot" data-title="{name}">'
+            f'<div class="plot" data-title="{title}">'
             f'<a href="{fname}" target="_blank"><img src="{fname}" alt="{name}"></a>'
             f'</div>'
         )
@@ -58,7 +59,8 @@ def main(input_file):
         '<script>',
         'const search=document.getElementById("search");',
         'search.addEventListener("input",()=>{',
-        ' const re=new RegExp(search.value||".","i");',
+        ' const escape=s=>s.replace(/[.*+?^${}()|[\\]\\]/g,"\\$&");',
+        ' const re=new RegExp(escape(search.value)||".","i");',
         ' document.querySelectorAll(".plot").forEach(p=>{',
         '  p.style.display=re.test(p.dataset.title)?"":"none";',
         ' });',
