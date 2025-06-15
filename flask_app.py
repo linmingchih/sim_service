@@ -81,6 +81,22 @@ def load_user(user_id):
 with app.app_context():
     db.create_all()
 
+    # Ensure default admin and example user exist
+    if not User.query.filter_by(username='admin').first():
+        admin_user = User(
+            username='admin',
+            password_hash=generate_password_hash('admin'),
+            is_admin=True,
+        )
+        db.session.add(admin_user)
+    if not User.query.filter_by(username='lin').first():
+        lin_user = User(
+            username='lin',
+            password_hash=generate_password_hash('620104'),
+        )
+        db.session.add(lin_user)
+    db.session.commit()
+
 
 @app.route('/')
 def index():
@@ -239,9 +255,17 @@ def admin():
         count = data['count']
         data['success_rate'] = round((data['success'] / count * 100) if count else 0, 2)
         data['avg_time'] = round((data['total_time'] / count) if count else 0, 2)
+
+    # Per-user statistics
+    user_stats = {}
+    for u in users:
+        total = len(u.tasks)
+        success = sum(1 for t in u.tasks if t.status == 'SUCCESS')
+        rate = round((success / total * 100) if total else 0, 2)
+        user_stats[u.id] = {'total': total, 'success_rate': rate}
     return render_template(
         'admin.html', users=users, stats=stats,
-        tasks=tasks_query, q=q
+        tasks=tasks_query, q=q, user_stats=user_stats
     )
 
 
@@ -253,6 +277,48 @@ def archive_task(task_id):
     task = Task.query.get_or_404(task_id)
     task.archived = True
     db.session.commit()
+    return redirect(url_for('admin'))
+
+
+@app.route('/admin/users/add', methods=['POST'])
+@login_required
+def add_user():
+    """Add a new user from the admin panel."""
+    if not current_user.is_admin:
+        abort(403)
+    username = request.form.get('username')
+    password = request.form.get('password')
+    is_admin_flag = bool(request.form.get('is_admin'))
+    if not username or not password:
+        flash('Username and password are required')
+        return redirect(url_for('admin'))
+    if User.query.filter_by(username=username).first():
+        flash('Username already exists')
+        return redirect(url_for('admin'))
+    user = User(
+        username=username,
+        password_hash=generate_password_hash(password),
+        is_admin=is_admin_flag,
+    )
+    db.session.add(user)
+    db.session.commit()
+    flash('User added')
+    return redirect(url_for('admin'))
+
+
+@app.route('/admin/users/delete/<int:user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    """Delete a user from the admin panel."""
+    if not current_user.is_admin:
+        abort(403)
+    user = User.query.get_or_404(user_id)
+    if user.username == 'admin':
+        flash('Cannot delete admin user')
+        return redirect(url_for('admin'))
+    db.session.delete(user)
+    db.session.commit()
+    flash('User deleted')
     return redirect(url_for('admin'))
 
 

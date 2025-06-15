@@ -7,17 +7,50 @@
 </form>
 <h2>Users</h2>
 <table class="table table-bordered mb-4">
-  <thead><tr><th>Username</th><th>Is Admin</th><th>Task Count</th></tr></thead>
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Is Admin</th>
+      <th>Task Count</th>
+      <th>Success Rate (%)</th>
+      <th>Action</th>
+    </tr>
+  </thead>
   <tbody>
     {% for u in users %}
     <tr>
       <td>{{ u.username }}</td>
       <td>{{ 'Yes' if u.is_admin else 'No' }}</td>
-      <td>{{ u.tasks | length }}</td>
+      <td>{{ user_stats[u.id].total }}</td>
+      <td>{{ user_stats[u.id].success_rate }}</td>
+      <td>
+        {% if u.username != 'admin' %}
+        <form method="post" action="{{ url_for('delete_user', user_id=u.id) }}" class="d-inline">
+          <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+        </form>
+        {% endif %}
+      </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
+
+<h3>Add User</h3>
+<form method="post" action="{{ url_for('add_user') }}" class="mb-4">
+  <div class="mb-3">
+    <label class="form-label">Username</label>
+    <input type="text" name="username" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Password</label>
+    <input type="password" name="password" class="form-control" required>
+  </div>
+  <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" name="is_admin" id="is_admin">
+    <label class="form-check-label" for="is_admin">Admin</label>
+  </div>
+  <button class="btn btn-primary" type="submit">Add</button>
+</form>
 <h2>Task Statistics</h2>
 <table class="table table-bordered mb-4">
   <thead><tr><th>Type</th><th>Count</th><th>Success Rate (%)</th><th>Avg Time (s)</th></tr></thead>
