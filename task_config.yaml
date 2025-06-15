@@ -5,3 +5,6 @@ fractal:
 primes:
   venv_python: python
   script_path: scripts/run_primes.py
+sparams:
+  venv_python: python
+  script_path: scripts/run_sparams.py
