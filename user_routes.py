@@ -19,7 +19,7 @@ user_bp = Blueprint('user', __name__)
 def index():
     if current_user.is_authenticated:
         return redirect(url_for('admin.admin_tasks')) if current_user.is_admin else redirect(url_for('user.dashboard'))
-    return redirect(url_for('login'))
+    return redirect(url_for('user.login'))
 
 
 @user_bp.route('/login', methods=['GET', 'POST'], endpoint='login')
@@ -41,7 +41,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for('user.login'))
 
 
 @user_bp.route('/task/<task_type>', endpoint='task_detail')
