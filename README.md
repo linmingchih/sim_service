@@ -3,10 +3,10 @@
 本專案示範如何使用 Flask、Celery 及 Redis 建立非同步任務平台，具備使用者系統與管理者介面，同時支援 `fractal` 與 `primes` 兩種範例任務。
 
 ## 功能概覽
-1. **Flask + Flask-Login**：提供註冊 / 登入 / 登出，以及使用者任務列表
+1. **Flask + Flask-Login**：提供登入 / 登出，以及使用者任務列表
 2. **Celery + Redis**：處理非同步任務，透過 `subprocess` 呼叫指定虛擬環境中的 Python 腳本
 3. **任務輸出管理**：所有結果檔案儲存在 `outputs/<task_id>/`，並自動產生 `result.json`
-4. **管理者介面**：檢視所有使用者、任務統計、搜尋及封存任務
+4. **管理者介面**：新增、編輯或刪除使用者，並檢視任務統計、搜尋及封存任務
 
 ## 專案結構
 ```
@@ -24,7 +24,6 @@ flask-task-platform/
 │   └── run_primes.py
 ├── templates/         # HTML 範本
 │   ├── login.html
-│   ├── register.html
 │   ├── dashboard.html
 │   └── admin.html
 └── static/            # 靜態資源
@@ -59,7 +58,7 @@ celery -A celery_app.celery worker --loglevel=info --pool=solo
    ```bash
    python flask_app.py
    ```
-7. 在瀏覽器開啟 `http://localhost:5000`，註冊帳號並登入
+7. 在瀏覽器開啟 `http://localhost:5000`，以管理者帳號登入
 8. 在 Dashboard 提交 `fractal` 或 `primes` 任務，完成後於列表下載結果檔案
 
 ## 任務範例

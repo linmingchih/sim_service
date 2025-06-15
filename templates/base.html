@@ -16,8 +16,7 @@
       <span class="navbar-text me-3">{{ current_user.username }}</span>
       <a class="btn btn-outline-secondary" href="{{ url_for('logout') }}">Logout</a>
       {% else %}
-      <a class="btn btn-outline-primary me-2" href="{{ url_for('login') }}">Login</a>
-      <a class="btn btn-primary" href="{{ url_for('register') }}">Register</a>
+      <a class="btn btn-outline-primary" href="{{ url_for('login') }}">Login</a>
       {% endif %}
     </div>
   </div>

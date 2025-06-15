@@ -86,6 +86,7 @@ with app.app_context():
         admin_user = User(
             username='admin',
             password_hash=generate_password_hash('admin'),
+            real_name='Administrator',
             is_admin=True,
         )
         db.session.add(admin_user)
@@ -93,6 +94,7 @@ with app.app_context():
         lin_user = User(
             username='lin',
             password_hash=generate_password_hash('620104'),
+            real_name='Example User',
         )
         db.session.add(lin_user)
     db.session.commit()
@@ -103,28 +105,6 @@ def index():
     return redirect(url_for('dashboard')) if current_user.is_authenticated else redirect(url_for('login'))
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
-    if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        if not username or not password:
-            flash('Username and password are required')
-            return redirect(url_for('register'))
-        if User.query.filter_by(username=username).first():
-            flash('Username already exists')
-            return redirect(url_for('register'))
-        new_user = User(
-            username=username,
-            password_hash=generate_password_hash(password)
-        )
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Registration successful. Please log in.')
-        return redirect(url_for('login'))
-    return render_template('register.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -288,6 +268,10 @@ def add_user():
         abort(403)
     username = request.form.get('username')
     password = request.form.get('password')
+    real_name = request.form.get('real_name')
+    department = request.form.get('department')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
     is_admin_flag = bool(request.form.get('is_admin'))
     if not username or not password:
         flash('Username and password are required')
@@ -298,12 +282,39 @@ def add_user():
     user = User(
         username=username,
         password_hash=generate_password_hash(password),
+        real_name=real_name,
+        department=department,
+        email=email,
+        phone=phone,
         is_admin=is_admin_flag,
     )
     db.session.add(user)
     db.session.commit()
     flash('User added')
     return redirect(url_for('admin'))
+
+
+@app.route('/admin/users/edit/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def edit_user(user_id):
+    """Edit an existing user from the admin panel."""
+    if not current_user.is_admin:
+        abort(403)
+    user = User.query.get_or_404(user_id)
+    if request.method == 'POST':
+        user.username = request.form.get('username')
+        user.real_name = request.form.get('real_name')
+        user.department = request.form.get('department')
+        user.email = request.form.get('email')
+        user.phone = request.form.get('phone')
+        password = request.form.get('password')
+        if password:
+            user.password_hash = generate_password_hash(password)
+        user.is_admin = bool(request.form.get('is_admin'))
+        db.session.commit()
+        flash('User updated')
+        return redirect(url_for('admin'))
+    return render_template('edit_user.html', user=user)
 
 
 @app.route('/admin/users/delete/<int:user_id>', methods=['POST'])
