@@ -4,16 +4,10 @@ import json
 import subprocess
 from datetime import datetime
 
-import yaml
+from config_utils import load_config
 
 from celery_app import celery
 from models import db, Task
-
-
-def load_config():
-    """Load task configuration from YAML file."""
-    with open('task_config.yaml', 'r') as f:
-        return yaml.safe_load(f)
 
 
 @celery.task(bind=True)
