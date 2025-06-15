@@ -35,6 +35,19 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
+
+# Custom Jinja filter to map task status to Bootstrap text color classes
+@app.template_filter('status_color')
+def status_color(status):
+    """Return Bootstrap color class for a task status."""
+    mapping = {
+        'SUCCESS': 'success',
+        'FAILURE': 'danger',
+        'RUNNING': 'primary',
+        'PENDING': 'secondary',
+    }
+    return mapping.get(status, 'secondary')
+
 # Setup Flask-Login
 login_manager = LoginManager()
 login_manager.login_view = 'login'

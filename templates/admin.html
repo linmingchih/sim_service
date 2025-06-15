@@ -41,7 +41,7 @@
       <td>{{ t.id }}</td>
       <td>{{ t.user.username }}</td>
       <td>{{ t.task_type }}</td>
-      <td>{{ t.status }}</td>
+      <td class="text-{{ t.status|status_color }}">{{ t.status }}</td>
       <td>{{ t.create_time }}</td>
       <td>{{ 'Yes' if t.archived else 'No' }}</td>
       <td>
