@@ -59,7 +59,7 @@ def main(input_file):
         '<script>',
         'const search=document.getElementById("search");',
         'search.addEventListener("input",()=>{',
-        ' const escape=s=>s.replace(/[.*+?^${}()|[\\]\\]/g,"\\$&");',
+        ' const escape=s=>s.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\$&");',
         ' const re=new RegExp(escape(search.value)||".","i");',
         ' document.querySelectorAll(".plot").forEach(p=>{',
         '  p.style.display=re.test(p.dataset.title)?"":"none";',
