@@ -67,7 +67,7 @@ celery -A celery_app.celery worker --loglevel=info --pool=solo
 ## 任務範例
 - **Fractal**：輸入深度 `--depth`，於 `outputs/<task_id>/fractal.png` 產生 Sierpinski 三角形圖檔，並將檔案列表與狀態寫入 `result.json`
 - **Primes**：輸入上限 `--n`，於 `outputs/<task_id>/result.csv` 輸出所有小於 N 的質數
-- **Sparams**：上傳任意埠數的 Touchstone 檔案（副檔名 `.sNp`，`N` 為任意整數），於 `outputs/<task_id>/` 產生各組 S-parameter 圖檔與 `index.html`
+- **Sparams**：上傳任意埠數的 Touchstone 檔案（副檔名 `.sNp`，`N` 為任意整數），於 `outputs/<task_id>/` 產生各組 S-parameter 圖檔與 `index.html`。`index.html` 中的搜尋框支援輸入正規表示式過濾檢視的圖檔
 
 ## 管理者功能
 - 設定管理者帳號：手動在資料庫中將 `User.is_admin` 欄位設為 `True`
