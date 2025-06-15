@@ -69,7 +69,8 @@ def dashboard():
     tasks_data = []
     for t in tasks_query:
         files = json.loads(t.result_files) if t.result_files else []
-        tasks_data.append({'task': t, 'files': files})
+        html_file = next((f for f in files if f.lower().endswith('.html')), None)
+        tasks_data.append({'task': t, 'files': files, 'html_file': html_file})
     return render_template('dashboard.html', tasks=tasks_data, configs=configs)
 
 
@@ -86,7 +87,8 @@ def dashboard_jobs():
     tasks_data = []
     for t in tasks_query:
         files = json.loads(t.result_files) if t.result_files else []
-        tasks_data.append({'task': t, 'files': files})
+        html_file = next((f for f in files if f.lower().endswith('.html')), None)
+        tasks_data.append({'task': t, 'files': files, 'html_file': html_file})
     return render_template('_jobs_table.html', tasks=tasks_data, configs=configs)
 
 
@@ -149,6 +151,16 @@ def download_file(task_id, filename):
         abort(403)
     directory = os.path.join(current_app.root_path, 'outputs', str(task_id))
     return send_from_directory(directory, filename, as_attachment=True)
+
+
+@user_bp.route('/view/<int:task_id>/<path:filename>', endpoint='view_file')
+@login_required
+def view_file(task_id, filename):
+    task = Task.query.get_or_404(task_id)
+    if task.user_id != current_user.id and not current_user.is_admin:
+        abort(403)
+    directory = os.path.join(current_app.root_path, 'outputs', str(task_id))
+    return send_from_directory(directory, filename, as_attachment=False)
 
 
 @user_bp.route('/delete/<int:task_id>', methods=['POST'], endpoint='delete_task')
