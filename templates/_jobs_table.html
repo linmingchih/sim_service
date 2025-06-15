@@ -13,7 +13,7 @@
       <td>{{ item.task.id }}</td>
       <td>{{ item.task.task_type }}</td>
       <td>{{ item.task.parameters }}</td>
-      <td>{{ item.task.status }}</td>
+      <td class="text-{{ item.task.status|status_color }}">{{ item.task.status }}</td>
       <td>{{ item.task.create_time }}</td>
       <td>
         {% for filename in item.files %}
