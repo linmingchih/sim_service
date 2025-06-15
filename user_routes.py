@@ -114,7 +114,7 @@ def submit_task(task_type):
     db.session.commit()
     from tasks import run_task
     run_task.delay(new_task.id)
-    return redirect(url_for('dashboard'))
+    return redirect(url_for('user.dashboard'))
 
 
 @user_bp.route('/download/<int:task_id>/<path:filename>', endpoint='download_file')
@@ -142,4 +142,4 @@ def delete_task(task_id):
     task.result_files = json.dumps([])
     db.session.commit()
     flash('Task deleted')
-    return redirect(url_for('dashboard'))
+    return redirect(url_for('user.dashboard'))
