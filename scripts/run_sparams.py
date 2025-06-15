@@ -48,7 +48,7 @@ def main(input_file):
     for fname in plot_files:
         name = os.path.splitext(fname)[0]
         html_parts.append(
-            f'<div class="plot" data-title="{name}"><img src="{fname}" alt="{name}"><div>{name}</div></div>'
+            f'<div class="plot" data-title="{name}"><img src="{fname}" alt="{name}"></div>'
         )
     html_parts.extend([
         '</div>',
