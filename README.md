@@ -25,7 +25,8 @@ flask-task-platform/
 ├── templates/         # HTML 範本
 │   ├── login.html
 │   ├── dashboard.html
-│   └── admin.html
+│   ├── admin_tasks.html
+│   └── admin_users.html
 └── static/            # 靜態資源
     └── css/
         └── style.css
