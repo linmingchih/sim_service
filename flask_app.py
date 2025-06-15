@@ -216,6 +216,24 @@ def download_file(task_id, filename):
     return send_from_directory(directory, filename, as_attachment=True)
 
 
+@app.route('/delete/<int:task_id>', methods=['POST'])
+@login_required
+def delete_task(task_id):
+    """Allow a user to delete their task and its output files."""
+    task = Task.query.get_or_404(task_id)
+    if task.user_id != current_user.id:
+        abort(403)
+    output_dir = os.path.join(basedir, 'outputs', str(task_id))
+    if os.path.exists(output_dir):
+        import shutil
+        shutil.rmtree(output_dir)
+    task.archived = True
+    task.result_files = json.dumps([])
+    db.session.commit()
+    flash('Task deleted')
+    return redirect(url_for('dashboard'))
+
+
 @app.route('/admin')
 @login_required
 def admin():
