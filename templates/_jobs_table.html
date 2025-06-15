@@ -14,7 +14,7 @@
       <td>{{ item.task.task_type }}</td>
       <td>{{ item.task.parameters }}</td>
       <td class="text-{{ item.task.status|status_color }}">{{ item.task.status }}</td>
-      <td>{{ item.task.create_time }}</td>
+      <td>{{ item.task.create_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
       <td>
         {% for filename in item.files %}
         <a class="link-primary" href="{{ url_for('user.download_file', task_id=item.task.id, filename=filename) }}">{{ filename }}</a><br>

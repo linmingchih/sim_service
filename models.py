@@ -28,7 +28,8 @@ class Task(db.Model):
     parameters = db.Column(db.Text, nullable=False)
     status = db.Column(db.String(20), default='PENDING', nullable=False)
     result_files = db.Column(db.Text)
-    create_time = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    # Record creation time using the server's local timezone
+    create_time = db.Column(db.DateTime, default=datetime.now, nullable=False)
     start_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
     archived = db.Column(db.Boolean, default=False, nullable=False)

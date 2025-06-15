@@ -19,7 +19,8 @@ def run_task(self, task_id):
 
     # Update task status and start time
     task.status = 'RUNNING'
-    task.start_time = datetime.utcnow()
+    # Use server local time for consistency with displayed timestamps
+    task.start_time = datetime.now()
     db.session.commit()
 
     config = load_config()
@@ -55,5 +56,6 @@ def run_task(self, task_id):
     # Update task record with outcome and completion time
     task.status = status
     task.result_files = json.dumps(files)
-    task.end_time = datetime.utcnow()
+    # Record completion time in server local timezone
+    task.end_time = datetime.now()
     db.session.commit()
