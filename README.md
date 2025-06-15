@@ -69,3 +69,4 @@ celery -A celery_app.celery worker --loglevel=info --pool=solo
 ## 管理者功能
 - 設定管理者帳號：手動在資料庫中將 `User.is_admin` 欄位設為 `True`
 - 管理者登入後瀏覽 `/admin`，可檢視所有使用者、任務統計、搜尋或封存任務
+- 管理者帳號僅提供管理功能，無法提交任務
