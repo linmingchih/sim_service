@@ -18,7 +18,8 @@ def main(input_file):
         for j in range(nports):
             fig, ax = plt.subplots()
             mag = 20 * np.log10(np.abs(ntwk.s[:, i, j]))
-            ax.plot(freqs, mag)
+            ax.plot(freqs, mag, color='red')
+            ax.grid(True)
             ax.set_xlabel('Frequency (Hz)')
             ax.set_ylabel('Magnitude (dB)')
             ax.set_title(f'S{i+1}{j+1}')
@@ -48,7 +49,7 @@ def main(input_file):
     for fname in plot_files:
         name = os.path.splitext(fname)[0]
         html_parts.append(
-            f'<div class="plot" data-title="{name}"><img src="{fname}" alt="{name}"><div>{name}</div></div>'
+            f'<div class="plot" data-title="{name}"><a href="{fname}" target="_blank"><img src="{fname}" alt="{name}"></a></div>'
         )
     html_parts.extend([
         '</div>',
