@@ -18,7 +18,7 @@ def main(input_file, plot='xy', parameter='S', operation='db'):
         for j in range(nports):
             fig, ax = plt.subplots()
             if plot == 'smith':
-                ntwk.plot_s_smith(m=i, n=j, ax=ax)
+                ntwk.plot_s_smith(m=i, n=j, ax=ax, color='red')
                 title = f'S({i + 1},{j + 1})'
                 fname = f'Smith_S_{i + 1}_{j + 1}.png'
             else:
@@ -30,7 +30,7 @@ def main(input_file, plot='xy', parameter='S', operation='db'):
                     'mag': f'plot_{prefix}_mag',
                     'phase': f'plot_{prefix}_deg',
                 }
-                getattr(ntwk, func_map[operation])(m=i, n=j, ax=ax)
+                getattr(ntwk, func_map[operation])(m=i, n=j, ax=ax, color='red')
                 ax.set_xlabel('Frequency (Hz)')
                 ylabel_map = {
                     'db': 'Magnitude (dB)',
@@ -92,7 +92,7 @@ def main(input_file, plot='xy', parameter='S', operation='db'):
         ' const terms=rule.split(";").map(s=>s.trim()).filter(Boolean);',
         ' if(!terms.length) return true;',
         ' for(const t of terms){',
-        '  const m=t.match(/^S\\(([^,]+),([^\\)]+)\\)$/i);',
+        '  const m=t.match(/^[SYZ]\\(([^,]+),([^\\)]+)\\)$/i);',
         '  if(!m) continue;',
         '  const left=m[1].trim();',
         '  const right=m[2].trim();',
