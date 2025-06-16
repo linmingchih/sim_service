@@ -124,6 +124,10 @@ def submit_task(task_type):
         upload_path = os.path.join(output_dir, filename)
         uploaded.save(upload_path)
         params['file'] = filename
+        params['plot'] = request.form.get('plot', 'xy')
+        if params['plot'] == 'xy':
+            params['parameter'] = request.form.get('parameter', 'S')
+            params['operation'] = request.form.get('operation', 'db')
         new_task.parameters = json.dumps(params)
         db.session.commit()
         from tasks import run_task
