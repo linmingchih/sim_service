@@ -1,4 +1,4 @@
-"""Generate S-parameter magnitude plots from a Touchstone file."""
+"""Generate network parameter plots from a Touchstone file."""
 import argparse
 import os
 import numpy as np
@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import skrf as rf
 
 
-def main(input_file):
+def main(input_file, plot='xy', parameter='S', operation='db'):
     ntwk = rf.Network(input_file)
     nports = ntwk.nports
     freqs = ntwk.f
@@ -17,15 +17,34 @@ def main(input_file):
     for i in range(nports):
         for j in range(nports):
             fig, ax = plt.subplots()
-            mag = 20 * np.log10(np.abs(ntwk.s[:, i, j]))
-            ax.plot(freqs, mag, color='red')
-            ax.set_xlabel('Frequency (Hz)')
-            ax.set_ylabel('Magnitude (dB)')
-            title = f'S({i + 1},{j + 1})'
+            if plot == 'smith':
+                ntwk.plot_s_smith(m=i, n=j, ax=ax)
+                title = f'S({i + 1},{j + 1})'
+                fname = f'Smith_S_{i + 1}_{j + 1}.png'
+            else:
+                prefix = parameter.lower()
+                func_map = {
+                    'db': f'plot_{prefix}_db',
+                    'real': f'plot_{prefix}_re',
+                    'imag': f'plot_{prefix}_im',
+                    'mag': f'plot_{prefix}_mag',
+                    'phase': f'plot_{prefix}_deg',
+                }
+                getattr(ntwk, func_map[operation])(m=i, n=j, ax=ax)
+                ax.set_xlabel('Frequency (Hz)')
+                label_map = {
+                    'db': 'dB',
+                    'real': 'Real',
+                    'imag': 'Imag',
+                    'mag': 'Mag',
+                    'phase': 'Phase',
+                }
+                ax.set_ylabel(f"{label_map[operation]}({parameter}{i + 1}{j + 1})")
+                title = f'{parameter}({i + 1},{j + 1})'
+                fname = f'{parameter}_{i + 1}_{j + 1}.png'
             ax.set_title(title)
             ax.grid(True)
             fig.tight_layout()
-            fname = f'S_{i + 1}_{j + 1}.png'
             fig.savefig(fname)
             plt.close(fig)
             plot_files.append((fname, title))
@@ -44,7 +63,7 @@ def main(input_file):
         '</style>',
         '</head>',
         '<body>',
-        f'<input type="text" id="search" placeholder="e.g., S(m,m);S(m,m+3)">',
+        f'<input type="text" id="search" placeholder="e.g., S(m,m); Y(m,m+3)">',
         '<div class="grid" id="plots">'
     ]
     for fname, title in plot_files:
@@ -73,10 +92,10 @@ def main(input_file):
         ' const terms=rule.split(";").map(s=>s.trim()).filter(Boolean);',
         ' if(!terms.length) return true;',
         ' for(const t of terms){',
-        '  const m=t.match(/^S\\(([^,]+),([^\\)]+)\\)$/i);',
+        '  const m=t.match(/^([SYZ])\\(([^,]+),([^\\)]+)\\)$/i);',
         '  if(!m) continue;',
-        '  const left=m[1].trim();',
-        '  const right=m[2].trim();',
+        '  const left=m[2].trim();',
+        '  const right=m[3].trim();',
         '  for(let v=1; v<=nports; v++){',
         '   const a=evalExpr(left,v);',
         '   const b=evalExpr(right,v);',
@@ -105,7 +124,10 @@ def main(input_file):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Plot S-parameters.')
+    parser = argparse.ArgumentParser(description='Plot network parameters.')
     parser.add_argument('--file', required=True, help='Touchstone file')
+    parser.add_argument('--plot', choices=['xy', 'smith'], default='xy')
+    parser.add_argument('--parameter', choices=['S', 'Y', 'Z'], default='S')
+    parser.add_argument('--operation', choices=['db', 'real', 'imag', 'mag', 'phase'], default='db')
     args = parser.parse_args()
-    main(args.file)
+    main(args.file, args.plot, args.parameter, args.operation)
