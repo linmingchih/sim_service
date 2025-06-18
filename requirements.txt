@@ -7,3 +7,4 @@ PyYAML>=5.3.1
 Pillow>=8.0.1
 matplotlib>=3.0
 scikit-rf>=0.29
+pyaedt>=0.7

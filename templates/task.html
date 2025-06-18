@@ -46,6 +46,11 @@
       plotSel.addEventListener('change', toggleOpts);
       toggleOpts();
     </script>
+    {% elif task_type == 'quickeye' %}
+    <label class="form-label">Touchstone File</label>
+      <input type="file" name="file" class="form-control" required>
+    <label class="form-label mt-3">Cell Count</label>
+      <input type="number" name="count" class="form-control" min="1" value="20">
     {% endif %}
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>

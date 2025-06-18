@@ -8,3 +8,6 @@ primes:
 sparams:
   venv_python: python
   script_path: scripts/run_sparams.py
+quickeye:
+  venv_python: python
+  script_path: scripts/run_quickeye.py
