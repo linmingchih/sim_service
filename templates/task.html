@@ -11,6 +11,13 @@
     {% elif task_type == 'primes' %}
     <label class="form-label">N</label>
     <input type="number" name="n" class="form-control" min="2" placeholder="N" required>
+    {% elif task_type == 'insertion_loss' %}
+    <label class="form-label">Length</label>
+    <input type="text" name="length" class="form-control" placeholder="e.g., 20mm" required>
+    <label class="form-label mt-2">Dk</label>
+    <input type="text" name="dk" class="form-control" placeholder="e.g., 4.2" required>
+    <label class="form-label mt-2">Df</label>
+    <input type="text" name="df" class="form-control" placeholder="e.g., 0.02" required>
     {% elif task_type == 'sparams' %}
     <label class="form-label">Touchstone File</label>
       <input type="file" name="file" class="form-control" required>
