@@ -11,6 +11,11 @@
     {% elif task_type == 'primes' %}
     <label class="form-label">N</label>
     <input type="number" name="n" class="form-control" min="2" placeholder="N" required>
+    {% elif task_type == 'chain' %}
+    <label class="form-label">Touchstone File</label>
+    <input type="file" name="file" class="form-control" required>
+    <label class="form-label mt-3">n</label>
+    <input type="number" name="n" class="form-control" min="1" value="1" required>
     {% elif task_type == 'sparams' %}
     <label class="form-label">Touchstone File</label>
       <input type="file" name="file" class="form-control" required>
