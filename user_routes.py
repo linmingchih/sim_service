@@ -105,6 +105,10 @@ def submit_task(task_type):
         params['depth'] = request.form.get('depth', type=int)
     elif task_type == 'primes':
         params['n'] = request.form.get('n', type=int)
+    elif task_type == 'insertion_loss':
+        params['length'] = request.form.get('length')
+        params['dk'] = request.form.get('dk')
+        params['df'] = request.form.get('df')
     elif task_type == 'sparams':
         uploaded = request.files.get('file')
         if not uploaded or uploaded.filename == '':
