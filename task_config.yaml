@@ -8,3 +8,6 @@ primes:
 sparams:
   venv_python: python
   script_path: scripts/run_sparams.py
+cascade:
+  venv_python: python
+  script_path: scripts/cascade.py
