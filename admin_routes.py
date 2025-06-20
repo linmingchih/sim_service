@@ -100,7 +100,7 @@ def add_user():
         return redirect(url_for('admin.admin_users'))
     user = User(
         username=username,
-        password_hash=generate_password_hash(password),
+        password_hash=generate_password_hash(password, method='pbkdf2:sha256'),
         real_name=real_name,
         department=department,
         email=email,
@@ -128,7 +128,7 @@ def edit_user(user_id):
         user.phone = request.form.get('phone')
         password = request.form.get('password')
         if password:
-            user.password_hash = generate_password_hash(password)
+            user.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
         user.is_admin = bool(request.form.get('is_admin'))
         db.session.commit()
         flash('User updated')

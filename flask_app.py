@@ -53,7 +53,7 @@ with app.app_context():
     if not User.query.filter_by(username='admin').first():
         admin_user = User(
             username='admin',
-            password_hash=generate_password_hash('admin'),
+            password_hash=generate_password_hash('admin', method='pbkdf2:sha256'),
             real_name='Administrator',
             is_admin=True,
         )
@@ -61,7 +61,7 @@ with app.app_context():
     if not User.query.filter_by(username='lin').first():
         lin_user = User(
             username='lin',
-            password_hash=generate_password_hash('620104'),
+            password_hash=generate_password_hash('620104', method='pbkdf2:sha256'),
             real_name='Example User',
         )
         db.session.add(lin_user)
