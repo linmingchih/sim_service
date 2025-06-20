@@ -133,34 +133,6 @@ def submit_task(task_type):
         from tasks import run_task
         run_task.delay(new_task.id)
         return redirect(url_for('user.dashboard'))
-    elif task_type == 'cascade':
-        uploaded = request.files.get('file')
-        if not uploaded or uploaded.filename == '':
-            flash('No file uploaded')
-            return redirect(url_for('user.task_detail', task_type=task_type))
-        from werkzeug.utils import secure_filename
-        filename = secure_filename(uploaded.filename)
-        new_task = Task(
-            user_id=current_user.id,
-            task_type=task_type,
-            parameters=json.dumps({})
-        )
-        db.session.add(new_task)
-        db.session.commit()
-        output_dir = os.path.join(current_app.root_path, 'outputs', str(new_task.id))
-        os.makedirs(output_dir, exist_ok=True)
-        upload_path = os.path.join(output_dir, filename)
-        uploaded.save(upload_path)
-        params['touchstone'] = filename
-        params['n'] = request.form.get('n', type=int)
-        ip = request.form.get('ip')
-        if ip:
-            params['ip'] = ip
-        new_task.parameters = json.dumps(params)
-        db.session.commit()
-        from tasks import run_task
-        run_task.delay(new_task.id)
-        return redirect(url_for('user.dashboard'))
     else:
         abort(400)
     new_task = Task(
