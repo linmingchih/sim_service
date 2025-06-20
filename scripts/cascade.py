@@ -39,7 +39,9 @@ def run_cascade(n: int, touchstone_path: str, windows_ip: str | None) -> None:
         setup = circuit.create_setup(setup_type=circuit.SETUPS.NexximLNA)
         setup.props["SweepDefinition"]["Data"] = "LINC 0GHz 20GHz 2001"
         circuit.analyze(setup.name)
-        circuit.export_touchstone(output_file="full_channel.s4p")
+        output_path = os.path.join(os.path.dirname(cir_path), "full_channel.s4p")
+        circuit.export_touchstone(output_file=output_path)
+        print(f"Touchstone saved to {output_path}")
     finally:
         circuit.release_desktop(True, False)
 
