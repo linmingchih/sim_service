@@ -15,15 +15,22 @@ def main(thickness, er, tand, width, length, srange):
 
 A1 Port1 Port2 W={float(width)*1e-3} P={float(length)*1e-3} COMPONENT=TRL SUBSTRATE=Substrate
 """
-    cir_path = "micro_strip.cir"
-    with open(cir_path, "w") as f:
+
+    with open("/mnt/d/demo/micro_strip.cir", "w") as f:
         f.write(netlist)
 
     circuit = Circuit(machine=os.environ['WINDOWS_IP'], port=50051)
     try:
-        circuit.add_netlist_datablock(cir_path)
         circuit.modeler.schematic.create_interface_port('Port1')
         circuit.modeler.schematic.create_interface_port('Port2')
+        oModule = circuit.odesign.GetModule("DataBlock")
+        oModule.AddNetlistDataBlock(
+            [
+                "NAME:DataBlock",
+                "name:="		, "Inc",
+                "filename:="		, "D:/demo/micro_strip.cir",
+                "filelocation:="	, 0
+            ])
         setup = circuit.create_setup(setup_type=circuit.SETUPS.NexximLNA)
         setup.props['SweepDefinition']['Data'] = f'LINC {srange}'
         setup.analyze()
