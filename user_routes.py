@@ -109,13 +109,6 @@ def submit_task(task_type):
         params['length'] = request.form.get('length')
         params['dk'] = request.form.get('dk')
         params['df'] = request.form.get('df')
-    elif task_type == 'microstrip':
-        params['thickness'] = request.form.get('thickness')
-        params['er'] = request.form.get('er')
-        params['tand'] = request.form.get('tand')
-        params['width'] = request.form.get('width')
-        params['length'] = request.form.get('length')
-        params['sweep_range'] = request.form.get('sweep_range')
     elif task_type == 'sparams':
         uploaded = request.files.get('file')
         if not uploaded or uploaded.filename == '':
