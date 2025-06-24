@@ -11,6 +11,3 @@ sparams:
 insertion_loss:
   venv_python: python
   script_path: scripts/get_insertiom_loss.py
-microstrip:
-  venv_python: python
-  script_path: scripts/run_microstrip.py

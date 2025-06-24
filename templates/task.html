@@ -18,19 +18,6 @@
     <input type="text" name="dk" class="form-control" placeholder="e.g., 4.2" required>
     <label class="form-label mt-2">Df</label>
     <input type="text" name="df" class="form-control" placeholder="e.g., 0.02" required>
-    {% elif task_type == 'microstrip' %}
-    <label class="form-label">Thickness (mm)</label>
-    <input type="text" name="thickness" class="form-control" required>
-    <label class="form-label mt-2">Er</label>
-    <input type="text" name="er" class="form-control" required>
-    <label class="form-label mt-2">TanD</label>
-    <input type="text" name="tand" class="form-control" required>
-    <label class="form-label mt-2">Width (mm)</label>
-    <input type="text" name="width" class="form-control" required>
-    <label class="form-label mt-2">Length (mm)</label>
-    <input type="text" name="length" class="form-control" required>
-    <label class="form-label mt-2">Sweep Range</label>
-    <input type="text" name="sweep_range" class="form-control" placeholder="0GHz,20GHz,2001" required>
     {% elif task_type == 'sparams' %}
     <label class="form-label">Touchstone File</label>
       <input type="file" name="file" class="form-control" required>
