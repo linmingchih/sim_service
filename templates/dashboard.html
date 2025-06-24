@@ -23,6 +23,7 @@
   {% for key, cfg in configs.items() %}
   <a class="btn btn-primary me-3" href="{{ url_for('user.task_detail', task_type=key) }}">{{ key|capitalize }} App</a>
   {% endfor %}
+  <a class="btn btn-secondary" href="{{ url_for('user.calculator') }}">Calculator</a>
 </div>
 <div id="jobs-section">
   {% include '_jobs_table.html' %}
