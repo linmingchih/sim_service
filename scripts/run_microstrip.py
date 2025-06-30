@@ -38,7 +38,7 @@ A1 Port1 Port2 W={float(width)*1e-3} P={float(length)*1e-3} COMPONENT=TRL SUBSTR
         x = data.primary_sweep_values
         y = data.data_real()
         plt.grid(True)
-        plt.xlabel('Frequency (Hz)')
+        plt.xlabel('Frequency (GHz)')
         plt.ylabel('dB(S21)')
         plt.plot(x, y)
         plt.tight_layout()
