@@ -196,8 +196,8 @@ def submit_task(task_type):
             params['operation'] = request.form.get('operation', 'db')
         new_task.parameters = json.dumps(params)
         db.session.commit()
-        from tasks import run_task
-        run_task.delay(new_task.id)
+        from tasks import schedule_task
+        schedule_task(new_task.id)
         return redirect(url_for('user.dashboard'))
     else:
         abort(400)
@@ -208,8 +208,8 @@ def submit_task(task_type):
     )
     db.session.add(new_task)
     db.session.commit()
-    from tasks import run_task
-    run_task.delay(new_task.id)
+    from tasks import schedule_task
+    schedule_task(new_task.id)
     return redirect(url_for('user.dashboard'))
 
 

@@ -2,6 +2,7 @@
 import os
 
 from flask import Flask
+from flask_executor import Executor
 from werkzeug.security import generate_password_hash
 from flask_login import LoginManager
 
@@ -11,7 +12,9 @@ from user_routes import user_bp
 from admin_routes import admin_bp
 
 
+# Flask application instance
 app = Flask(__name__)
+executor = Executor(app)
 # Secret key for session management; override in environment for production
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'replace-this-secret')
 basedir = os.path.abspath(os.path.dirname(__file__))
