@@ -50,7 +50,7 @@ A1 Port1 Port2 W={float(width)*1e-3} P={float(length)*1e-3} COMPONENT=TRL SUBSTR
         with open('index.html', 'w') as f:
             f.write(f'<html><body><img src="{img_file}" alt="Microstrip"></body></html>')
     finally:
-        circuit.release_desktop(True, False)
+        circuit.release_desktop(True, True)
 
 
 if __name__ == '__main__':
