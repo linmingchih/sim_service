@@ -1,6 +1,7 @@
 """Simulate a microstrip line in AEDT and plot dB(S21)."""
 import argparse
 import os
+import tempfile
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -16,7 +17,8 @@ def main(thickness, er, tand, width, length, srange):
 A1 Port1 Port2 W={float(width)*1e-3} P={float(length)*1e-3} COMPONENT=TRL SUBSTRATE=Substrate
 """
 
-    with open("/mnt/d/demo/micro_strip.cir", "w") as f:
+    netlist_file = os.path.join(tempfile.gettempdir(), "micro_strip.cir")
+    with open(netlist_file, "w") as f:
         f.write(netlist)
 
     circuit = Circuit(machine=os.environ['WINDOWS_IP'], port=50051)
@@ -28,7 +30,7 @@ A1 Port1 Port2 W={float(width)*1e-3} P={float(length)*1e-3} COMPONENT=TRL SUBSTR
             [
                 "NAME:DataBlock",
                 "name:="		, "Inc",
-                "filename:="		, "D:/demo/micro_strip.cir",
+                "filename:="            , netlist_file.replace('\\', '/'),
                 "filelocation:="	, 0
             ])
         setup = circuit.create_setup(setup_type=circuit.SETUPS.NexximLNA)
