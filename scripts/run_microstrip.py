@@ -21,7 +21,7 @@ A1 Port1 Port2 W={float(width)*1e-3} P={float(length)*1e-3} COMPONENT=TRL SUBSTR
     with open(netlist_file, "w") as f:
         f.write(netlist)
 
-    circuit = Circuit(machine=os.environ['WINDOWS_IP'], port=50051)
+    circuit = Circuit()
     try:
         circuit.modeler.schematic.create_interface_port('Port1')
         circuit.modeler.schematic.create_interface_port('Port2')
