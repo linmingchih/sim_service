@@ -13,7 +13,6 @@
     <a class="navbar-brand" href="{{ url_for('user.index') }}">Task Platform</a>
     <div class="ms-auto">
       {% if current_user.is_authenticated %}
-      <a class="btn btn-outline-primary me-2" href="{{ url_for('user.calculator') }}">Calculator</a>
       <span class="navbar-text me-3">{{ current_user.username }}</span>
       <a class="btn btn-outline-secondary" href="{{ url_for('user.logout') }}">Logout</a>
       {% else %}
