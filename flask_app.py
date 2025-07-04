@@ -75,4 +75,11 @@ app.register_blueprint(admin_bp)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Use built-in server in debug mode; otherwise start Waitress for production
+    if os.environ.get('FLASK_DEBUG'):  # development convenience
+        app.run(debug=True)
+    else:
+        from waitress import serve
+
+        port = int(os.environ.get('PORT', 5000))
+        serve(app, host='0.0.0.0', port=port)
