@@ -11,43 +11,6 @@ from flask_login import (
 
 from models import db, User, Task
 from config_utils import load_config, get_task_description
-import ast
-import operator as _op
-
-_allowed_operators = {
-    ast.Add: _op.add,
-    ast.Sub: _op.sub,
-    ast.Mult: _op.mul,
-    ast.Div: _op.truediv,
-    ast.Pow: _op.pow,
-    ast.USub: _op.neg,
-}
-
-
-def _safe_eval(expr):
-    """Safely evaluate a simple arithmetic expression."""
-    node = ast.parse(expr, mode='eval')
-
-    def _eval(n):
-        if isinstance(n, ast.Expression):
-            return _eval(n.body)
-        if isinstance(n, ast.Constant):
-            if isinstance(n.value, (int, float)):
-                return n.value
-            raise ValueError('Invalid constant')
-        if isinstance(n, ast.Num):
-            return n.n
-        if isinstance(n, ast.BinOp):
-            op_type = type(n.op)
-            if op_type in _allowed_operators:
-                return _allowed_operators[op_type](_eval(n.left), _eval(n.right))
-        if isinstance(n, ast.UnaryOp):
-            op_type = type(n.op)
-            if op_type in _allowed_operators:
-                return _allowed_operators[op_type](_eval(n.operand))
-        raise ValueError('Unsupported expression')
-
-    return _eval(node)
 
 user_bp = Blueprint('user', __name__)
 
@@ -111,22 +74,6 @@ def dashboard():
     return render_template('dashboard.html', tasks=tasks_data, configs=configs)
 
 
-@user_bp.route('/calculator', methods=['GET', 'POST'], endpoint='calculator')
-@login_required
-def calculator():
-    """Simple calculator page."""
-    if current_user.is_admin:
-        return redirect(url_for('admin.admin_tasks'))
-    result = None
-    expression = ''
-    if request.method == 'POST':
-        expression = request.form.get('expression', '')
-        if expression:
-            try:
-                result = _safe_eval(expression)
-            except Exception as exc:
-                flash(f'Error: {exc}')
-    return render_template('calculator.html', expression=expression, result=result)
 
 
 @user_bp.route('/dashboard/jobs', endpoint='dashboard_jobs')
@@ -160,10 +107,6 @@ def submit_task(task_type):
         params['depth'] = request.form.get('depth', type=int)
     elif task_type == 'primes':
         params['n'] = request.form.get('n', type=int)
-    elif task_type == 'insertion_loss':
-        params['length'] = request.form.get('length')
-        params['dk'] = request.form.get('dk')
-        params['df'] = request.form.get('df')
     elif task_type == 'microstrip':
         params['thickness'] = request.form.get('thickness')
         params['er'] = request.form.get('er')
