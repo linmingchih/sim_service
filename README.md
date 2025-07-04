@@ -47,9 +47,13 @@ flask-task-platform/
    pip install -r requirements.txt
    ```
 3. 編輯 `task_config.yaml`，將 `venv_python` 指向你的 Python 執行路徑（若使用虛擬環境為 `venv/bin/python` 或 `venv\Scripts\python.exe`）
-4. 啟動 Flask 應用：
+4. 啟動 Flask 應用（預設使用 Waitress 作為生產環境伺服器）：
    ```bash
    python flask_app.py
+   ```
+   若要使用內建開發伺服器，可設定 `FLASK_DEBUG=1`：
+   ```bash
+   FLASK_DEBUG=1 python flask_app.py
    ```
 5. 在瀏覽器開啟 `http://localhost:5000`，以管理者帳號登入
 6. 在 Dashboard 提交 `fractal` 或 `primes` 任務，完成後於列表下載結果檔案
