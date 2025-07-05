@@ -42,6 +42,8 @@ flask-task-platform/
    # Linux / macOS
    # source venv/bin/activate
    ```
+   Windows 使用者也可直接執行 `install_venv.bat`，依提示指定 Python 3.10+
+   的執行路徑後，程式會自動建立 `venv` 並安裝 `requirements.txt` 中的模組。
 2. 安裝套件：
    ```bash
    pip install -r requirements.txt
