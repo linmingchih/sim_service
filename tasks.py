@@ -30,6 +30,9 @@ def run_task(task_id):
         # expand user and resolve absolute paths for Python executable and script
         from flask import current_app
         venv_python = os.path.expanduser(task_conf.get('venv_python', 'python'))
+        if venv_python == 'python':
+            import sys
+            venv_python = sys.executable
         script_rel = task_conf.get('script_path')
         script_path = os.path.join(current_app.root_path, script_rel) if script_rel else None
 
