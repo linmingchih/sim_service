@@ -55,6 +55,8 @@ flask-task-platform/
    ```bash
    FLASK_DEBUG=1 python flask_app.py
    ```
+   Windows 使用者也可執行 `reoload.bat`，
+   在啟動服務的同時顯示本機 IP 供其他裝置連線。
 5. 在瀏覽器開啟 `http://localhost:5000`，以管理者帳號登入
 6. 在 Dashboard 提交 `fractal` 或 `primes` 任務，完成後於列表下載結果檔案
 
