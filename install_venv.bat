@@ -1,58 +1,64 @@
 @echo off
 setlocal
 
-rem Default Python path
+REM Default python path
 set "PY_EXE=C:\Program Files\ANSYS Inc\v251\AnsysEM\commonfiles\CPython\3_10\winx64\Release\python\python.exe"
 
-:CHECK_EXIST
-if exist "%PY_EXE%" (
-    goto CHECK_VERSION
-) else (
-    echo Python not found at:
-    echo    %PY_EXE%
-    set /P PY_EXE=Enter path to python.exe (or Ctrl+C to cancel): 
-    if not exist "%PY_EXE%" (
-        echo Path "%PY_EXE%" does not exist.
-        goto CHECK_EXIST
-    )
+:CheckPath
+if not exist "%PY_EXE%" (
+    echo Python not found at %PY_EXE%
+    set /P "PY_EXE=Enter full path to python.exe (or Ctrl+C to cancel): "
+    goto CheckPath
 )
 
-:CHECK_VERSION
-for /f "tokens=1,2 delims=." %%A in ('"%PY_EXE%" -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"') do (
-    set "PMAJOR=%%A"
-    set "PMINOR=%%B"
-)
-if %PMAJOR% LSS 3 (
-    goto VERSION_WARN
-)
-if %PMAJOR%==3 if %PMINOR% LSS 10 (
-    goto VERSION_WARN
-)
-
-:CREATE_VENV
-echo Using %PY_EXE%
-"%PY_EXE%" -m venv venv
-if errorlevel 1 (
-    echo Failed to create virtual environment.
+REM Query python version into temp file
+"%PY_EXE%" -c "import sys; sys.stdout.write(str(sys.version_info.major)+'.'+str(sys.version_info.minor))" > pyver.tmp 2>nul
+if not exist pyver.tmp (
+    echo Unable to run python version check.
+    pause
     exit /b 1
 )
 
-echo Installing required modules...
+for /f "tokens=1,2 delims=." %%A in (pyver.tmp) do (
+    set "PMAJOR=%%A"
+    set "PMINOR=%%B"
+)
+del pyver.tmp
+
+if "%PMAJOR%"=="" (
+    echo Unable to detect Python version.
+    pause
+    exit /b 1
+)
+
+if %PMAJOR% LSS 3 goto VersionWarn
+if %PMAJOR% EQU 3 if %PMINOR% LSS 10 goto VersionWarn
+
+:CreateVenv
+echo Using "%PY_EXE%"
+"%PY_EXE%" -m venv venv || (
+    echo Failed to create virtual environment.
+    pause
+    exit /b 1
+)
+
+echo Installing packages...
 venv\Scripts\python -m pip install --upgrade pip
-venv\Scripts\python -m pip install -r requirements.txt
+venv\Scripts\python -m pip install -r requirements.txt || (
+    echo Package installation failed.
+    pause
+    exit /b 1
+)
 
 echo Virtual environment setup complete.
 pause
 exit /b 0
 
-:VERSION_WARN
-echo Detected Python version %PMAJOR%.%PMINOR%.
-echo Python 3.10 or higher is required.
-choice /M "Provide a different path?"
-if errorlevel 2 (
-    echo Installation aborted.
-    exit /b 1
-) else (
-    set /P PY_EXE=Enter path to python.exe (or Ctrl+C to cancel): 
-    goto CHECK_EXIST
+:VersionWarn
+echo Detected Python version %PMAJOR%.%PMINOR%. Python 3.10 or higher is required.
+set /P "RETRY=Provide different python.exe path? (Y/N): "
+if /I "%RETRY%"=="Y" (
+    set /P "PY_EXE=Enter full path to python.exe: "
+    goto CheckPath
 )
+exit /b 1
