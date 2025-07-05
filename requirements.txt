@@ -7,3 +7,5 @@ matplotlib>=3.0
 scikit-rf>=0.29
 Flask-Executor>=1.0.0
 waitress>=2.1.2
+
+pyaedt
