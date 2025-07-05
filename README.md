@@ -61,11 +61,15 @@ flask-task-platform/
    在啟動服務的同時顯示本機 IP 供其他裝置連線。
 5. 在瀏覽器開啟 `http://localhost:5000`，以管理者帳號登入
 6. 在 Dashboard 提交 `fractal` 或 `primes` 任務，完成後於列表下載結果檔案
+7. 若要使用 `microstrip` 模擬功能，確保在相同的虛擬環境中安裝 `pyaedt`
+   ，並在 `task_config.yaml` 將 `venv_python` 指向該環境的 Python 執行檔
+   （例如 `venv\Scripts\python.exe` 或 `venv/bin/python`）。
 
 ## 任務範例
 - **Fractal**：輸入深度 `--depth`，於 `outputs/<task_id>/fractal.png` 產生 Sierpinski 三角形圖檔，並將檔案列表與狀態寫入 `result.json`
 - **Primes**：輸入上限 `--n`，於 `outputs/<task_id>/result.csv` 輸出所有小於 N 的質數
 - **Sparams**：上傳任意埠數的 Touchstone 檔案（副檔名 `.sNp`，`N` 為任意整數），於 `outputs/<task_id>/` 產生各組 S-parameter 圖檔與 `index.html`。`index.html` 中的搜尋框支援輸入正規表示式過濾檢視的圖檔
+- **Microstrip**：模擬微帶傳輸線並輸出 `microstrip.png`，需要安裝 `pyaedt` 並連線 ANSYS Electronics Desktop
 
 ## 管理者功能
 - 設定管理者帳號：手動在資料庫中將 `User.is_admin` 欄位設為 `True`
