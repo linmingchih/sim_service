@@ -52,14 +52,12 @@ flask-task-platform/
    * 建議作業系統：Windows 10 64-bit 或以上。
    * Python 3.8 至 3.11。
 
----
 
 ### 2. 下載與解壓
 
 1. 從 GitHub 或內部資源下載 `sim_service-master.zip`。
 2. 將壓縮檔解壓至欲安裝的資料夾（例如：`C:\sim_service-master`）。
 
----
 
 ### 3. 建立虛擬環境與安裝模組
 
@@ -77,7 +75,6 @@ flask-task-platform/
    * 此腳本將建立 Python 虛擬環境並安裝所需套件。
    * 期間若提示權限問題，請以系統管理員權限重新執行。
 
----
 
 ### 4. 啟動應用程式
 
@@ -89,8 +86,6 @@ flask-task-platform/
 2. 程式啟動後，Console 會顯示伺服器對外的 IP 位址與連接埠，範例：
 
    > Server will be available at [http://192.168.0.10:5000](http://192.168.0.10:5000)
-
----
 
 ### 5. 測試登入
 
