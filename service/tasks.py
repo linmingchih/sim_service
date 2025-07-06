@@ -15,7 +15,7 @@ def run_task(task_id):
     """Execute a user-submitted script in a virtual environment."""
     # Use application context when running in a background thread
     with app.app_context():
-        task = Task.query.get(task_id)
+        task = db.session.get(Task, task_id)
         if not task:
             return
 
