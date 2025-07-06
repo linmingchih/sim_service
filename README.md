@@ -12,25 +12,23 @@
 ## 專案結構
 ```
 flask-task-platform/
-├── flask_app.py       # 主 Flask 應用
-├── tasks.py           # 定義背景任務執行流程
-├── models.py          # SQLAlchemy 資料模型（User / Task）
+├── service/           # 應用程式模組
+│   ├── flask_app.py   # 主 Flask 應用
+│   ├── tasks.py       # 定義背景任務執行流程
+│   ├── models.py      # SQLAlchemy 資料模型
+│   ├── admin_routes.py
+│   ├── user_routes.py
+│   ├── config_utils.py
+│   ├── scripts/       # 任務腳本
+│   │   ├── run_fractal.py
+│   │   ├── run_primes.py
+│   │   └── run_sparams.py
+│   ├── templates/     # HTML 範本
+│   └── static/        # 靜態資源
 ├── task_config.yaml   # 任務腳本與虛擬環境設定
 ├── requirements.txt   # 相依套件列表
 ├── .gitignore         # Git 忽略清單
-├── outputs/           # 任務輸出目錄（程式執行中自動建立）
-├── scripts/           # 任務腳本
-│   ├── run_fractal.py
-│   ├── run_primes.py
-│   └── run_sparams.py
-├── templates/         # HTML 範本
-│   ├── login.html
-│   ├── dashboard.html
-│   ├── admin_tasks.html
-│   └── admin_users.html
-└── static/            # 靜態資源
-    └── css/
-        └── style.css
+└── outputs/           # 任務輸出目錄（程式執行中自動建立）
 ```
 
 ## 快速啟動
@@ -51,14 +49,12 @@ flask-task-platform/
 3. 編輯 `task_config.yaml`，將 `venv_python` 指向你的 Python 執行路徑（若使用虛擬環境為 `venv/bin/python` 或 `venv\Scripts\python.exe`）
 4. 啟動 Flask 應用（預設使用 Waitress 作為生產環境伺服器）：
    ```bash
-   python flask_app.py
+   python service/flask_app.py
    ```
    若要使用內建開發伺服器，可設定 `FLASK_DEBUG=1`：
    ```bash
-   FLASK_DEBUG=1 python flask_app.py
+   FLASK_DEBUG=1 python service/flask_app.py
    ```
-   Windows 使用者也可執行 `reoload.bat`，
-   在啟動服務的同時顯示本機 IP 供其他裝置連線。
 5. 在瀏覽器開啟 `http://localhost:5000`，以管理者帳號登入
 6. 在 Dashboard 提交 `fractal` 或 `primes` 任務，完成後於列表下載結果檔案
 7. 若要使用 `microstrip` 模擬功能，確保在相同的虛擬環境中安裝 `pyaedt`

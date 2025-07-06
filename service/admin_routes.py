@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash
 from flask_login import login_required, current_user
 from sqlalchemy import or_
 
-from models import db, User, Task
+from .models import db, User, Task
 
 admin_bp = Blueprint('admin', __name__)
 

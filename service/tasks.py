@@ -5,10 +5,10 @@ import subprocess
 import html
 from datetime import datetime
 
-from config_utils import load_config
+from .config_utils import load_config
 
-from flask_app import app, executor
-from models import db, Task
+from .flask_app import app, executor
+from .models import db, Task
 
 
 def run_task(task_id):
