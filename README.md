@@ -37,8 +37,6 @@ flask-task-platform/
 以下安裝指引適用於已安裝 ANSYS Electronics Desktop (AEDT) 且可連線至 License Server 的 Windows 工作站。
 請依照以下步驟操作：
 
----
-
 ### 1. 環境準備
 
 1. 確認 **Windows 工作站**：
