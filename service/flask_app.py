@@ -69,13 +69,13 @@ with app.app_context():
             is_admin=True,
         )
         db.session.add(admin_user)
-    if not User.query.filter_by(username='lin').first():
-        lin_user = User(
-            username='lin',
-            password_hash=generate_password_hash('620104', method='pbkdf2:sha256'),
+    if not User.query.filter_by(username='abc').first():
+        abc_user = User(
+            username='abc',
+            password_hash=generate_password_hash('1234', method='pbkdf2:sha256'),
             real_name='Example User',
         )
-        db.session.add(lin_user)
+        db.session.add(abc_user)
     db.session.commit()
 
 app.register_blueprint(user_bp)
