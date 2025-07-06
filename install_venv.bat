@@ -1,8 +1,22 @@
 @echo off
 setlocal
 
-REM Default python path
-set "PY_EXE=C:\Program Files\ANSYS Inc\v251\AnsysEM\commonfiles\CPython\3_10\winx64\Release\python\python.exe"
+REM Candidate python paths in priority order
+set "PY1=C:\Program Files\ANSYS Inc\v251\AnsysEM\commonfiles\CPython\3_10\winx64\Release\python\python.exe"
+set "PY2=C:\Program Files\AnsysEM\v242\Win64\commonfiles\CPython\3_10\winx64\Release\python\python.exe"
+set "PY3=C:\Program Files\AnsysEM\v241\Win64\commonfiles\CPython\3_10\winx64\Release\python\python.exe"
+set "PY4=C:\Program Files\AnsysEM\v232\Win64\commonfiles\CPython\3_10\winx64\Release\python\python.exe"
+
+set "PY_EXE="
+if exist "%PY1%" set "PY_EXE=%PY1%"
+if not defined PY_EXE if exist "%PY2%" set "PY_EXE=%PY2%"
+if not defined PY_EXE if exist "%PY3%" set "PY_EXE=%PY3%"
+if not defined PY_EXE if exist "%PY4%" set "PY_EXE=%PY4%"
+
+if not defined PY_EXE (
+    echo Python not found in default locations.
+    set /P "PY_EXE=Enter full path to python.exe (or Ctrl+C to cancel): "
+)
 
 :CheckPath
 if not exist "%PY_EXE%" (
