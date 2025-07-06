@@ -7,9 +7,9 @@ from werkzeug.security import generate_password_hash
 from flask_login import LoginManager
 
 
-from models import db, User, Task
-from user_routes import user_bp
-from admin_routes import admin_bp
+from .models import db, User, Task
+from .user_routes import user_bp
+from .admin_routes import admin_bp
 
 
 # Flask application instance

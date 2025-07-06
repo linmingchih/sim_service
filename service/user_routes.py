@@ -9,8 +9,8 @@ from flask_login import (
     login_user, login_required, logout_user, current_user
 )
 
-from models import db, User, Task
-from config_utils import load_config, get_task_description
+from .models import db, User, Task
+from .config_utils import load_config, get_task_description
 
 user_bp = Blueprint('user', __name__)
 
