@@ -1,5 +1,13 @@
 """Main Flask application for the task platform."""
 import os
+import sys
+
+# Allow running this file directly from the ``service`` directory.
+if __package__ is None or __package__ == "":
+    PACKAGE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+    if PACKAGE_PATH not in sys.path:
+        sys.path.insert(0, PACKAGE_PATH)
+    __package__ = "service"
 
 from flask import Flask
 from flask_executor import Executor
