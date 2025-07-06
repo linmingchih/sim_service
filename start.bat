@@ -1,5 +1,5 @@
 @echo off
-
+setlocal enabledelayedexpansion
 if not exist "venv\Scripts\activate.bat" (
     echo Virtual environment not found.
     echo Please run install_venv.bat first.
