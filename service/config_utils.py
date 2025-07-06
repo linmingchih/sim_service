@@ -5,8 +5,15 @@ from flask import current_app
 
 
 def load_config():
-    """Load task configuration from YAML file."""
-    with open('task_config.yaml', 'r') as f:
+    """Load task configuration from YAML file.
+
+    The path is resolved relative to the project root so the function
+    works regardless of the current working directory when the
+    application starts.
+    """
+    base_dir = os.path.dirname(os.path.dirname(__file__))
+    config_path = os.path.join(base_dir, 'task_config.yaml')
+    with open(config_path, 'r') as f:
         return yaml.safe_load(f)
 
 
