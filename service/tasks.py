@@ -36,7 +36,12 @@ def run_task(task_id):
         script_rel = task_conf.get('script_path')
         script_path = os.path.join(current_app.root_path, script_rel) if script_rel else None
 
-        output_dir = os.path.join('outputs', str(task.id))
+        # Determine absolute path for the task's output directory.  The project
+        # root is one level above the ``service`` package, so join that with
+        # ``outputs/<task_id>`` to ensure paths are consistent regardless of the
+        # current working directory.
+        base_dir = os.path.dirname(current_app.root_path)
+        output_dir = os.path.join(base_dir, 'outputs', str(task.id))
         os.makedirs(output_dir, exist_ok=True)
 
         # Prepare command arguments
