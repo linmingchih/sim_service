@@ -61,6 +61,13 @@ flask-task-platform/
    ，並在 `task_config.yaml` 將 `venv_python` 指向該環境的 Python 執行檔
    （例如 `venv\Scripts\python.exe` 或 `venv/bin/python`）。
 
+## Windows 端安裝指引
+1. 準備一台已安裝 **ANSYS Electronics Desktop (AEDT)** 且可連線至 License Server 的 Windows 工作站，並確保該機器能上網。
+2. 下載 `sim_service-master.zip` 後解壓縮。
+3. 在資料夾中執行 `install_venv.bat` 建立虛擬環境並下載所需模組。
+4. 完成後執行 `start.bat`，應用的 IP 位址會顯示於 console。
+5. 測試登入請使用帳號 `abc`、密碼 `1234`；使用 `admin` / `admin` 可進入管理者模式。
+
 ## 任務範例
 - **Fractal**：輸入深度 `--depth`，於 `outputs/<task_id>/fractal.png` 產生 Sierpinski 三角形圖檔，並將檔案列表與狀態寫入 `result.json`
 - **Primes**：輸入上限 `--n`，於 `outputs/<task_id>/result.csv` 輸出所有小於 N 的質數
