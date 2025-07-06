@@ -128,7 +128,11 @@ def submit_task(task_type):
         )
         db.session.add(new_task)
         db.session.commit()
-        output_dir = os.path.join(current_app.root_path, 'outputs', str(new_task.id))
+        # Store uploaded files in the same ``outputs`` directory used by the
+        # background task execution.  The project root is one level above the
+        # ``service`` package.
+        base_dir = os.path.dirname(current_app.root_path)
+        output_dir = os.path.join(base_dir, 'outputs', str(new_task.id))
         os.makedirs(output_dir, exist_ok=True)
         upload_path = os.path.join(output_dir, filename)
         uploaded.save(upload_path)
@@ -162,7 +166,8 @@ def download_file(task_id, filename):
     task = Task.query.get_or_404(task_id)
     if task.user_id != current_user.id and not current_user.is_admin:
         abort(403)
-    directory = os.path.join(current_app.root_path, 'outputs', str(task_id))
+    base_dir = os.path.dirname(current_app.root_path)
+    directory = os.path.join(base_dir, 'outputs', str(task_id))
     return send_from_directory(directory, filename, as_attachment=True)
 
 
@@ -172,7 +177,8 @@ def view_file(task_id, filename):
     task = Task.query.get_or_404(task_id)
     if task.user_id != current_user.id and not current_user.is_admin:
         abort(403)
-    directory = os.path.join(current_app.root_path, 'outputs', str(task_id))
+    base_dir = os.path.dirname(current_app.root_path)
+    directory = os.path.join(base_dir, 'outputs', str(task_id))
     return send_from_directory(directory, filename, as_attachment=False)
 
 
@@ -183,7 +189,8 @@ def delete_task(task_id):
     task = Task.query.get_or_404(task_id)
     if task.user_id != current_user.id:
         abort(403)
-    output_dir = os.path.join(current_app.root_path, 'outputs', str(task_id))
+    base_dir = os.path.dirname(current_app.root_path)
+    output_dir = os.path.join(base_dir, 'outputs', str(task_id))
     if os.path.exists(output_dir):
         import shutil
         shutil.rmtree(output_dir)
