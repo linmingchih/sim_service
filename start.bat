@@ -21,4 +21,7 @@ set "IP=!rawip:~1!"
 
 echo Server will be available at http://!IP!:%PORT%
 
+rem Open the default browser to the application URL
+start "" "http://!IP!:%PORT%"
+
 python service\flask_app.py
