@@ -31,7 +31,6 @@ flask-task-platform/
 └── outputs/           # 任務輸出目錄（程式執行中自動建立）
 ```
 
-
 ## Windows 端安裝指引
 
 以下安裝指引適用於已安裝 ANSYS Electronics Desktop (AEDT) 且可連線至 License Server 的 Windows 工作站。
@@ -50,7 +49,6 @@ flask-task-platform/
    * 建議作業系統：Windows 10 64-bit 或以上。
    * Python 3.8 至 3.11。
 
-
 ### 2. 下載與解壓
 
 1. 從 GitHub 或內部資源下載 `sim_service-master.zip`。
@@ -64,6 +62,7 @@ flask-task-platform/
    ```bat
    cd C:\sim_service-master
    ```
+
 2. 執行安裝批次腳本：
 
    ```bat
@@ -81,7 +80,8 @@ flask-task-platform/
    ```bat
    start.bat
    ```
-2. 程式啟動後，Console 會顯示伺服器對外的 IP 位址與連接埠，範例：
+
+2. 程式啟動後，Console 會顯示伺服器對外的 IP 位址與連接埠，例如：
 
    > Server will be available at [http://192.168.0.10:5000](http://192.168.0.10:5000)
 
@@ -92,8 +92,31 @@ flask-task-platform/
 | 一般使用者       | `abc`         | `1234`        | 可使用基礎功能  |
 | 管理者 (Admin) | `admin`       | `admin`       | 具備管理介面權限 |
 
-1. 在瀏覽器開啟指令顯示的網址。
-2. 輸入上述 **帳號／密碼** 進行登入測試。
+1. 在瀏覽器中輸入步驟 4 顯示的網址。
+2. 輸入上述帳號與密碼進行登入測試。
+
+### 6. 外部登入測試（跨電腦測試）
+
+若欲從其他電腦瀏覽此網站，需確認下列事項：
+
+1. **伺服器端已開放 5000 埠（TCP）**：
+
+   * 可透過防火牆例外或手動設定防火牆開啟。
+   * 指令參考（需管理員權限）：
+
+     ```powershell
+     netsh advfirewall firewall add rule name="SimService Port 5000" dir=in action=allow protocol=TCP localport=5000
+     ```
+
+2. **用戶端電腦與伺服器在同一區網或網段可互通**。
+
+3. 用戶端瀏覽器輸入伺服器顯示的 IP 與連接埠，例如：
+
+   ```
+   http://192.168.0.10:5000
+   ```
+
+4. 驗證是否能夠正常顯示登入頁面並進行登入操作。
 
 ## 任務範例
 - **Fractal**：輸入深度 `--depth`，於 `outputs/<task_id>/fractal.png` 產生 Sierpinski 三角形圖檔，並將檔案列表與狀態寫入 `result.json`
