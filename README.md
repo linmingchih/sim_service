@@ -128,3 +128,6 @@ flask-task-platform/
 - 設定管理者帳號：手動在資料庫中將 `User.is_admin` 欄位設為 `True`
 - 管理者登入後瀏覽 `/admin`，可檢視所有使用者、任務統計、搜尋或封存任務
 - 管理者帳號僅提供管理功能，無法提交任務
+
+## Stress Test
+執行 `python -m service.stress_jobs --iterations 100 --rate 0.5 --seed 42` 即可隨機向所有任務類型提交作業，測試系統在大量請求下的穩定性。`--rate` 表示平均每秒提交的作業數，可搭配 `--seed` 控制分布。
