@@ -1,0 +1,21 @@
+venv_python: python
+script: runner.py
+parameters:
+  thickness:
+    label: Thickness (mm)
+    type: text
+  er:
+    label: Er
+    type: text
+  tand:
+    label: TanD
+    type: text
+  width:
+    label: Width (mm)
+    type: text
+  length:
+    label: Length (mm)
+    type: text
+  srange:
+    label: Sweep Range
+    type: text

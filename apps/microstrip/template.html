@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Microstrip App{% endblock %}
+{% block content %}
+<h1 class="mb-4">Microstrip Application</h1>
+<form action="{{ url_for('user.submit_task', task_type='microstrip') }}" method="post" class="mt-3">
+  <div class="mb-3">
+    <label class="form-label">Thickness (mm)</label>
+    <input type="text" name="thickness" class="form-control" required>
+    <label class="form-label mt-2">Er</label>
+    <input type="text" name="er" class="form-control" required>
+    <label class="form-label mt-2">TanD</label>
+    <input type="text" name="tand" class="form-control" required>
+    <label class="form-label mt-2">Width (mm)</label>
+    <input type="text" name="width" class="form-control" required>
+    <label class="form-label mt-2">Length (mm)</label>
+    <input type="text" name="length" class="form-control" required>
+    <label class="form-label mt-2">Sweep Range</label>
+    <input type="text" name="srange" class="form-control" placeholder="0GHz 20GHz 2001" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}
