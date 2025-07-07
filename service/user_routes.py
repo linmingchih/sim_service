@@ -52,8 +52,19 @@ def task_detail(task_type):
     configs = load_config()
     if task_type not in configs:
         abort(404)
+    conf = configs[task_type]
     description = get_task_description(task_type)
-    return render_template('task.html', task_type=task_type, description=description)
+    template_name = f"{task_type}/template.html"
+    try:
+        return render_template(template_name, task_type=task_type, description=description)
+    except Exception:
+        return render_template(
+            'generic_task.html',
+            task_type=task_type,
+            description=description,
+            params=conf.get('params_def', {}),
+            metadata=conf.get('metadata', {})
+        )
 
 
 @user_bp.route('/dashboard', endpoint='dashboard')
@@ -102,58 +113,36 @@ def submit_task(task_type):
     configs = load_config()
     if task_type not in configs:
         abort(404)
+    conf = configs[task_type]
     params = {}
-    if task_type == 'fractal':
-        params['depth'] = request.form.get('depth', type=int)
-    elif task_type == 'primes':
-        params['n'] = request.form.get('n', type=int)
-    elif task_type == 'microstrip':
-        params['thickness'] = request.form.get('thickness')
-        params['er'] = request.form.get('er')
-        params['tand'] = request.form.get('tand')
-        params['width'] = request.form.get('width')
-        params['length'] = request.form.get('length')
-        params['srange'] = request.form.get('srange')
-    elif task_type == 'sparams':
-        uploaded = request.files.get('file')
-        if not uploaded or uploaded.filename == '':
-            flash('No file uploaded')
-            return redirect(url_for('user.task_detail', task_type=task_type))
-        from werkzeug.utils import secure_filename
-        filename = secure_filename(uploaded.filename)
-        new_task = Task(
-            user_id=current_user.id,
-            task_type=task_type,
-            parameters=json.dumps({})
-        )
+    file_params = [n for n, p in conf.get('params_def', {}).items() if p.get('type') == 'file']
+    non_file_params = [n for n in conf.get('params_def', {}) if n not in file_params]
+
+    if file_params:
+        new_task = Task(user_id=current_user.id, task_type=task_type, parameters=json.dumps({}))
         db.session.add(new_task)
         db.session.commit()
-        # Store uploaded files in the same ``outputs`` directory used by the
-        # background task execution.  The project root is one level above the
-        # ``service`` package.
         base_dir = os.path.dirname(current_app.root_path)
         output_dir = os.path.join(base_dir, 'outputs', str(new_task.id))
         os.makedirs(output_dir, exist_ok=True)
-        upload_path = os.path.join(output_dir, filename)
-        uploaded.save(upload_path)
-        params['file'] = filename
-        params['plot'] = request.form.get('plot', 'xy')
-        if params['plot'] == 'xy':
-            params['parameter'] = request.form.get('parameter', 'S')
-            params['operation'] = request.form.get('operation', 'db')
-        new_task.parameters = json.dumps(params)
-        db.session.commit()
-        from .tasks import schedule_task
-        schedule_task(new_task.id)
-        return redirect(url_for('user.dashboard'))
+        from werkzeug.utils import secure_filename
+        for fp in file_params:
+            uploaded = request.files.get(fp)
+            if not uploaded or uploaded.filename == '':
+                flash('No file uploaded')
+                return redirect(url_for('user.task_detail', task_type=task_type))
+            filename = secure_filename(uploaded.filename)
+            uploaded.save(os.path.join(output_dir, filename))
+            params[fp] = filename
     else:
-        abort(400)
-    new_task = Task(
-        user_id=current_user.id,
-        task_type=task_type,
-        parameters=json.dumps(params)
-    )
-    db.session.add(new_task)
+        new_task = Task(user_id=current_user.id, task_type=task_type, parameters=json.dumps({}))
+        db.session.add(new_task)
+        db.session.commit()
+
+    for pname in non_file_params:
+        params[pname] = request.form.get(pname)
+
+    new_task.parameters = json.dumps(params)
     db.session.commit()
     from .tasks import schedule_task
     schedule_task(new_task.id)

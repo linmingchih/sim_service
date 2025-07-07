@@ -18,6 +18,8 @@ from flask_login import LoginManager
 from .models import db, User, Task
 from .user_routes import user_bp
 from .admin_routes import admin_bp
+from .plugin_loader import scan_plugins
+from jinja2 import ChoiceLoader, FileSystemLoader
 
 
 # Flask application instance
@@ -59,6 +61,18 @@ def load_user(user_id):
 
 with app.app_context():
     db.create_all()
+
+    # Discover plugins and store on app config
+    plugins = scan_plugins()
+    app.config['PLUGINS'] = plugins
+
+    # Extend Jinja loader to include plugin templates
+    plugin_paths = [info['path'] for info in plugins.values()]
+    if plugin_paths:
+        app.jinja_loader = ChoiceLoader([
+            app.jinja_loader,
+            FileSystemLoader(plugin_paths),
+        ])
 
     # Ensure default admin and example user exist
     if not User.query.filter_by(username='admin').first():

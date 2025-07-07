@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Manage Apps{% endblock %}
+{% block content %}
+<h1 class="mb-4">Manage Apps</h1>
+<table class="table">
+  <thead>
+    <tr><th>Name</th><th>Description</th><th>Enabled</th><th>Action</th></tr>
+  </thead>
+  <tbody>
+    {% for name, info in plugins.items() %}
+    <tr>
+      <td>{{ info.metadata.name or name }}</td>
+      <td>{{ info.metadata.description }}</td>
+      <td>{{ 'Yes' if info.enabled else 'No' }}</td>
+      <td>
+        <form method="post" class="d-inline">
+          <input type="hidden" name="name" value="{{ name }}">
+          <input type="hidden" name="enabled" value="{{ '0' if info.enabled else '1' }}">
+          <button type="submit" class="btn btn-sm {{ 'btn-danger' if info.enabled else 'btn-success' }}">
+            {{ 'Disable' if info.enabled else 'Enable' }}
+          </button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

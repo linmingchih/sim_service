@@ -21,7 +21,7 @@
 <h2>Submit a new task</h2>
 <div class="mb-4">
   {% for key, cfg in configs.items() %}
-  <a class="btn btn-primary me-3" href="{{ url_for('user.task_detail', task_type=key) }}">{{ key|capitalize }} App</a>
+  <a class="btn btn-primary me-3" href="{{ url_for('user.task_detail', task_type=key) }}">{{ cfg.metadata.name or key|capitalize }} App</a>
   {% endfor %}
 </div>
 <div id="jobs-section">
