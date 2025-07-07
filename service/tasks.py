@@ -8,6 +8,7 @@ from datetime import datetime
 from .config_utils import load_config
 
 from .flask_app import app, executor
+from flask import has_request_context
 from .models import db, Task
 
 
@@ -87,4 +88,10 @@ def run_task(task_id):
 
 def schedule_task(task_id):
     """Submit ``run_task`` to the :class:`~flask_executor.Executor`."""
-    return executor.submit(run_task, task_id)
+    if has_request_context():
+        return executor.submit(run_task, task_id)
+    # When called outside a request context (e.g., stress tests), using
+    # ``Executor.submit`` fails because it wraps the function with
+    # ``copy_current_request_context``. Submit directly to the underlying
+    # executor instead.
+    return executor._self.submit(run_task, task_id)
