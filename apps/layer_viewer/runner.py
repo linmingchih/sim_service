@@ -8,34 +8,34 @@ HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset=\"UTF-8\">
 <title>Layer Viewer</title>
 <style>
-.container{display:flex;max-width:800px;margin:auto;}
-#layers{width:30%;padding:10px;}
-#viewer{width:70%;padding:10px;}
-#layerSelect{width:100%;height:200px;}
-img{max-width:100%;height:auto;}
+.container{{display:flex;max-width:800px;margin:auto;}}
+#layers{{width:30%;padding:10px;}}
+#viewer{{width:70%;padding:10px;}}
+#layerSelect{{width:100%;height:200px;}}
+img{{max-width:100%;height:auto;}}
 </style>
 </head>
 <body>
-<div class="container">
-  <div id="layers">
-    <select id="layerSelect" size="10">
+<div class=\"container\">
+  <div id=\"layers\">
+    <select id=\"layerSelect\" size=\"10\">
       {options}
     </select>
   </div>
-  <div id="viewer">
-    <img id="layerImage" src="{first_img}" alt="{first_layer}">
+  <div id=\"viewer\">
+    <img id=\"layerImage\" src=\"{first_img}\" alt=\"{first_layer}\">
   </div>
 </div>
 <script>
 const sel = document.getElementById('layerSelect');
 const img = document.getElementById('layerImage');
-sel.addEventListener('change', () => {
+sel.addEventListener('change', () => {{
   img.src = sel.value + '.png';
   img.alt = sel.value;
-});
+}});
 </script>
 </body>
 </html>
