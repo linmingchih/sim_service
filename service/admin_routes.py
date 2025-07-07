@@ -7,6 +7,7 @@ from flask_login import login_required, current_user
 from sqlalchemy import or_
 
 from .models import db, User, Task
+from .plugin_loader import scan_plugins, load_registry, save_registry
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -150,3 +151,20 @@ def delete_user(user_id):
     db.session.commit()
     flash('User deleted')
     return redirect(url_for('admin.admin_users'))
+
+
+@admin_bp.route('/admin/apps', methods=['GET', 'POST'], endpoint='admin_apps')
+@login_required
+def admin_apps():
+    """Manage plugin enable/disable status."""
+    if not current_user.is_admin:
+        abort(403)
+    registry = load_registry()
+    if request.method == 'POST':
+        name = request.form.get('name')
+        enabled = request.form.get('enabled') == '1'
+        registry[name] = enabled
+        save_registry(registry)
+        return redirect(url_for('admin.admin_apps'))
+    plugins = scan_plugins()
+    return render_template('admin_apps.html', plugins=plugins)
