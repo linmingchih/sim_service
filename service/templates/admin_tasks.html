@@ -3,6 +3,7 @@
 {% block content %}
 <h1 class="mb-4">Task Statistics</h1>
 <a class="btn btn-outline-primary mb-3" href="{{ url_for('admin.admin_users') }}">Manage Users</a>
+<a class="btn btn-outline-primary mb-3 ms-2" href="{{ url_for('admin.admin_apps') }}">Manage Apps</a>
 <form method="get" action="{{ url_for('admin.admin_tasks') }}" class="input-group mb-4">
   <input type="text" name="q" class="form-control" placeholder="Search tasks" value="{{ q }}">
   <button class="btn btn-primary" type="submit">Search</button>

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Primes App{% endblock %}
+{% block content %}
+<h1 class="mb-4">Primes Application</h1>
+<form action="{{ url_for('user.submit_task', task_type='primes') }}" method="post" class="mt-3">
+  <div class="mb-3">
+    <label class="form-label">N</label>
+    <input type="number" name="n" class="form-control" min="2" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}

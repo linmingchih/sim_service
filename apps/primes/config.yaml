@@ -1,0 +1,7 @@
+venv_python: python
+script: runner.py
+parameters:
+  n:
+    label: N
+    type: number
+    min: 2

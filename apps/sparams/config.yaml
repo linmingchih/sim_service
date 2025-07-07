@@ -1,0 +1,28 @@
+venv_python: python
+script: runner.py
+parameters:
+  file:
+    label: Touchstone File
+    type: file
+  plot:
+    label: Plot Type
+    type: select
+    options:
+      xy: XY Plot
+      smith: Smith Chart
+  parameter:
+    label: Parameter
+    type: select
+    options:
+      S: S
+      Y: Y
+      Z: Z
+  operation:
+    label: Operation
+    type: select
+    options:
+      db: dB
+      real: Real
+      imag: Imag
+      mag: Mag
+      phase: Phase
