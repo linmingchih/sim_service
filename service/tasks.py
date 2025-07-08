@@ -3,6 +3,7 @@ import os
 import json
 import subprocess
 import html
+import fnmatch
 from datetime import datetime
 
 from .config_utils import load_config
@@ -74,6 +75,12 @@ def run_task(task_id):
 
         # Generate result.json with list of output files and status
         files = os.listdir(output_dir)
+        keep_patterns = task_conf.get("result_keep")
+        if keep_patterns:
+            kept = set()
+            for pat in keep_patterns:
+                kept.update(fnmatch.filter(files, pat))
+            files = sorted(kept)
         result = {'files': files, 'status': status}
         with open(os.path.join(output_dir, 'result.json'), 'w') as f:
             json.dump(result, f)
