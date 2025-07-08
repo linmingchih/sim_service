@@ -25,27 +25,38 @@
   const rows = {{ ordered_rows|tojson }};
   const grid = document.getElementById('app-grid');
 
+  function createRow(apps = [], placeholder = false) {
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'app-row';
+    if (placeholder) {
+      rowDiv.classList.add('placeholder-row');
+      rowDiv.dataset.placeholder = 'true';
+      rowDiv.textContent = 'Drag app here to start a new row';
+    }
+    apps.forEach((item) => {
+      const card = document.createElement('a');
+      card.className = 'btn btn-primary app-card';
+      card.dataset.name = item.name;
+      card.href = item.url;
+      card.textContent = `${item.display} App`;
+      rowDiv.appendChild(card);
+    });
+    new Sortable(rowDiv, { group: 'apps', animation: 150, onEnd: saveOrder });
+    return rowDiv;
+  }
+
   function renderGrid() {
     grid.innerHTML = '';
-    rows.forEach((apps,rowIndex) => {
-      const rowDiv = document.createElement('div');
-      rowDiv.className = 'app-row';
-      apps.forEach((item) => {
-        const card = document.createElement('div');
-        card.className = 'app-card';
-        card.dataset.name = item.name;
-        card.innerHTML = `<a href="${item.url}" class="stretched-link">${item.display} App</a>`;
-        rowDiv.appendChild(card);
-      });
-      grid.appendChild(rowDiv);
-      new Sortable(rowDiv,{group:'apps',animation:150,onEnd:saveOrder});
+    rows.forEach((apps) => {
+      grid.appendChild(createRow(apps));
     });
+    grid.appendChild(createRow([], true));
     colorRows();
   }
 
   function colorRows(){
     const classes = ['row-color-0','row-color-1','row-color-2','row-color-3'];
-    Array.from(grid.children).forEach((rowDiv,rowIdx)=>{
+    Array.from(grid.children).filter(r=>!r.dataset.placeholder).forEach((rowDiv,rowIdx)=>{
       Array.from(rowDiv.children).forEach(card=>{
         classes.forEach(c=>card.classList.remove(c));
         card.classList.add(classes[rowIdx%classes.length]);
@@ -54,9 +65,20 @@
   }
 
   function saveOrder(){
-    const layout = Array.from(grid.children).map(rowDiv =>
-      Array.from(rowDiv.children).map(card=>card.dataset.name)
-    );
+    const placeholder = grid.querySelector('[data-placeholder]');
+    if (placeholder && placeholder.children.length > 0) {
+      placeholder.classList.remove('placeholder-row');
+      placeholder.removeAttribute('data-placeholder');
+      placeholder.textContent = '';
+      new Sortable(placeholder, { group: 'apps', animation: 150, onEnd: saveOrder });
+      grid.appendChild(createRow([], true));
+    } else if (!placeholder) {
+      grid.appendChild(createRow([], true));
+    }
+
+    const layout = Array.from(grid.children)
+      .filter(r => !r.dataset.placeholder)
+      .map(rowDiv => Array.from(rowDiv.children).map(card => card.dataset.name));
     fetch('{{ url_for('user.save_layout') }}',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
