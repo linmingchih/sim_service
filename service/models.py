@@ -33,3 +33,10 @@ class Task(db.Model):
     start_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
     archived = db.Column(db.Boolean, default=False, nullable=False)
+
+
+class AppLayout(db.Model):
+    """Per-user application layout information."""
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    layout = db.Column(db.Text, nullable=False)
+    user = db.relationship('User', backref=db.backref('app_layout', uselist=False))

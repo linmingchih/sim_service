@@ -19,3 +19,23 @@ th, td {
     color: red;
     list-style: none;
 }
+
+#app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+}
+
+.app-card {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    cursor: move;
+    position: relative;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.row-color-0 { background-color: #e3f2fd; }
+.row-color-1 { background-color: #e8f5e9; }
+.row-color-2 { background-color: #fff3cd; }
+.row-color-3 { background-color: #f8d7da; }
