@@ -27,6 +27,7 @@ def load_config(enabled_only: bool = True):
             "script_path": script_rel,
             "params_def": cfg.get("parameters", {}),
             "metadata": info.get("metadata", {}),
+            "result_keep": cfg.get("result_keep"),
         }
     return configs
 

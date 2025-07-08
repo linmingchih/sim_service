@@ -4,3 +4,7 @@ parameters:
   file:
     label: BRD File
     type: file
+result_keep:
+  - index.html
+  - '*.xlsx'
+  - '*.aedb.zip'
