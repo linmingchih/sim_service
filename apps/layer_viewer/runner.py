@@ -13,7 +13,7 @@ HTML_TEMPLATE = """
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Layer Viewer</title>
+<title>Load Brd</title>
 <style>
 body {{
   margin: 0;
