@@ -17,12 +17,11 @@
       <td>{{ item.task.create_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
       <td>
         {% if item.html_file %}
-        <a class="link-primary" href="{{ url_for('user.view_file', task_id=item.task.id, filename=item.html_file) }}">{{ item.html_file }}</a>
-        {% else %}
-          {% for filename in item.files %}
-          <a class="link-primary" href="{{ url_for('user.download_file', task_id=item.task.id, filename=filename) }}">{{ filename }}</a><br>
-          {% endfor %}
+        <a class="link-primary" href="{{ url_for('user.view_file', task_id=item.task.id, filename=item.html_file) }}">{{ item.html_file }}</a><br>
         {% endif %}
+        {% for filename in item.files %}
+        <a class="link-primary" href="{{ url_for('user.download_file', task_id=item.task.id, filename=filename) }}">{{ filename }}</a><br>
+        {% endfor %}
       </td>
       <td>
         <form method="post" action="{{ url_for('user.delete_task', task_id=item.task.id) }}" class="d-inline" onsubmit="return confirm('Delete this task?');">
