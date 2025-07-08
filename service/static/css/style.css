@@ -26,14 +26,24 @@ th, td {
     gap: 1rem;
 }
 
+
 .app-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 1rem;
 }
 
 .app-card {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    height: 120px;
+    color: #fff;
+    background-color: #343a40;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    text-decoration: none;
     cursor: move;
 }
 
@@ -47,7 +57,7 @@ th, td {
     font-style: italic;
 }
 
-.row-color-0 { background-color: #e3f2fd; }
-.row-color-1 { background-color: #e8f5e9; }
-.row-color-2 { background-color: #fff3cd; }
-.row-color-3 { background-color: #f8d7da; }
+.row-color-0 { border-color: #e3f2fd; }
+.row-color-1 { border-color: #e8f5e9; }
+.row-color-2 { border-color: #fff3cd; }
+.row-color-3 { border-color: #f8d7da; }
