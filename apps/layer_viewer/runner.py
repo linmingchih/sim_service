@@ -1,6 +1,10 @@
 """Generate layer images from a BRD file using pyaedt."""
 import argparse
 import os
+import zipfile
+import xml.etree.ElementTree as ET
+
+import pandas as pd
 from pyaedt import Edb
 
 
@@ -107,9 +111,70 @@ viewer.addEventListener('wheel', (e) => {{
 """
 
 
+def xml_to_csv(xml_path, csv_path):
+    """Convert stackup XML to CSV with selected fields."""
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+    stackup = root.find("Stackup")
+
+    mats = {}
+    for mat in stackup.find("Materials"):
+        name = mat.attrib["Name"]
+        cond = mat.find("Conductivity")
+        if cond is not None:
+            mats[name] = {
+                "Conductivity (S/m)": float(cond.find("Double").text),
+                "DielectricConstant": None,
+                "LossTangent": None,
+            }
+        else:
+            diel = float(mat.find("Permittivity/Double").text)
+            loss = float(mat.find("DielectricLossTangent/Double").text)
+            mats[name] = {
+                "Conductivity (S/m)": None,
+                "DielectricConstant": diel,
+                "LossTangent": loss,
+            }
+
+    rows = []
+    for layer in stackup.find("Layers"):
+        try:
+            attr = layer.attrib
+            p = mats[attr["Material"]]
+            rows.append({
+                "Name": attr["Name"],
+                "Type": attr["Type"],
+                "Thickness (mm)": float(attr["Thickness"]),
+                "Conductivity (S/m)": p["Conductivity (S/m)"],
+                "DielectricConstant": p["DielectricConstant"],
+                "LossTangent": p["LossTangent"],
+            })
+        except Exception:
+            pass
+
+    df = pd.DataFrame(rows)
+    df.to_csv(csv_path, index=False)
+    return df
+
+
 def main(brd_file):
     edb = Edb(brd_file, edbversion="2024.1")
     try:
+        # Export stackup XML and convert to CSV
+        edb.stackup.export_stackup("stackup.xml")
+        xml_to_csv("stackup.xml", "stackup.csv")
+
+        # Save AEDB and zip the directory
+        aedb_name = os.path.splitext(os.path.basename(brd_file))[0] + ".aedb"
+        edb.save_edb_as(aedb_name)
+        zip_name = aedb_name + ".zip"
+        with zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED) as zipf:
+            for root_dir, dirs, files in os.walk(aedb_name):
+                for fname in files:
+                    fpath = os.path.join(root_dir, fname)
+                    arc = os.path.relpath(fpath, aedb_name)
+                    zipf.write(fpath, arc)
+
         layers = list(edb.stackup.signal_layers.keys())
         if not layers:
             return
