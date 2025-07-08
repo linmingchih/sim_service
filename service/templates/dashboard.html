@@ -66,12 +66,14 @@
 
   function saveOrder(){
     const placeholder = grid.querySelector('[data-placeholder]');
-    if (placeholder && placeholder.children.length > 0) {
-      placeholder.classList.remove('placeholder-row');
-      placeholder.removeAttribute('data-placeholder');
-      placeholder.textContent = '';
-      new Sortable(placeholder, { group: 'apps', animation: 150, onEnd: saveOrder });
-      grid.appendChild(createRow([], true));
+      if (placeholder && placeholder.children.length > 0) {
+        placeholder.classList.remove('placeholder-row');
+        placeholder.removeAttribute('data-placeholder');
+        Array.from(placeholder.childNodes)
+          .filter(n => n.nodeType === Node.TEXT_NODE)
+          .forEach(n => n.remove());
+        new Sortable(placeholder, { group: 'apps', animation: 150, onEnd: saveOrder });
+        grid.appendChild(createRow([], true));
     } else if (!placeholder) {
       grid.appendChild(createRow([], true));
     }
