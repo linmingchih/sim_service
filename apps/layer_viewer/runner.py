@@ -76,9 +76,8 @@ let scale = 1;
 sel.addEventListener('change', () => {{
   img.src = sel.value + '.png';
   img.alt = sel.value;
-  scale = 1;
-  img.style.transform = `scale(1)`;
-  img.style.transformOrigin = 'center center';
+  // maintain current zoom level and position when switching layers
+  img.style.transform = `scale(${{scale}})`;
 }});
 
 viewer.addEventListener('wheel', (e) => {{
