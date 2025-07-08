@@ -111,8 +111,8 @@ viewer.addEventListener('wheel', (e) => {{
 """
 
 
-def xml_to_csv(xml_path, csv_path):
-    """Convert stackup XML to CSV with selected fields."""
+def xml_to_excel(xml_path, excel_path):
+    """Convert stackup XML to Excel with selected fields."""
     tree = ET.parse(xml_path)
     root = tree.getroot()
     stackup = root.find("Stackup")
@@ -153,16 +153,16 @@ def xml_to_csv(xml_path, csv_path):
             pass
 
     df = pd.DataFrame(rows)
-    df.to_csv(csv_path, index=False)
+    df.to_excel(excel_path, index=False)
     return df
 
 
 def main(brd_file):
     edb = Edb(brd_file, edbversion="2024.1")
     try:
-        # Export stackup XML and convert to CSV
+        # Export stackup XML and convert to Excel
         edb.stackup.export_stackup("stackup.xml")
-        xml_to_csv("stackup.xml", "stackup.csv")
+        xml_to_excel("stackup.xml", "stackup.xlsx")
 
         # Save AEDB and zip the directory
         aedb_name = os.path.splitext(os.path.basename(brd_file))[0] + ".aedb"
