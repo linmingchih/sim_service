@@ -48,13 +48,8 @@ th, td {
 }
 
 .placeholder-row {
-    min-height: 3rem;
-    border: 2px dashed #ccc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #6c757d;
-    font-style: italic;
+    /* Hidden placeholder row to preserve layout without visible box */
+    display: none;
 }
 
 .row-color-0 { border-color: #e3f2fd; }

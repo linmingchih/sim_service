@@ -49,9 +49,6 @@
   function createPlaceholderRow(){
     const rowDiv = document.createElement('div');
     rowDiv.className = 'placeholder-row';
-    // Placeholder row has no visible text by default
-    // Use aria-label so screen readers convey purpose
-    rowDiv.setAttribute('aria-label', 'Drop here to create new row');
     new Sortable(rowDiv, {
       group:'apps',
       animation:150,
