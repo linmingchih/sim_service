@@ -19,11 +19,44 @@
 </script>
 {% endif %}
 <h2>Submit a new task</h2>
-<div class="mb-4">
-  {% for key, cfg in configs.items() %}
-  <a class="btn btn-primary me-3" href="{{ url_for('user.task_detail', task_type=key) }}">{{ cfg.metadata.name or key|capitalize }} App</a>
-  {% endfor %}
-</div>
+<div id="app-grid" class="mb-4"></div>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+  const apps = {{ ordered_apps|tojson }};
+  const grid = document.getElementById('app-grid');
+  function renderGrid() {
+    grid.innerHTML = '';
+    apps.forEach((item) => {
+      const card = document.createElement('div');
+      card.className = 'app-card';
+      card.dataset.name = item.name;
+      card.innerHTML = `<a href="${item.url}" class="stretched-link">${item.display} App</a>`;
+      grid.appendChild(card);
+    });
+    colorRows();
+  }
+  function colorRows(){
+    const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+    const classes = ['row-color-0','row-color-1','row-color-2','row-color-3'];
+    Array.from(grid.children).forEach((el,i)=>{
+      classes.forEach(c=>el.classList.remove(c));
+      const row = Math.floor(i/cols)%classes.length;
+      el.classList.add(classes[row]);
+    });
+  }
+  function saveOrder(){
+    const order = Array.from(grid.children).map(el=>el.dataset.name);
+    fetch('{{ url_for('user.save_layout') }}',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({layout:order})
+    });
+    colorRows();
+  }
+  new Sortable(grid,{animation:150,onEnd:saveOrder});
+  window.addEventListener('resize',colorRows);
+  renderGrid();
+</script>
 <div id="jobs-section">
   {% include '_jobs_table.html' %}
 </div>

@@ -9,7 +9,7 @@ from flask_login import (
     login_user, login_required, logout_user, current_user
 )
 
-from .models import db, User, Task
+from .models import db, User, Task, AppLayout
 from .config_utils import load_config, get_task_description
 
 user_bp = Blueprint('user', __name__)
@@ -73,6 +73,30 @@ def dashboard():
     if current_user.is_admin:
         return redirect(url_for('admin.admin_tasks'))
     configs = load_config()
+    layout_obj = AppLayout.query.filter_by(user_id=current_user.id).first()
+    order = list(configs.keys())
+    if layout_obj:
+        try:
+            saved = json.loads(layout_obj.layout)
+            order = [n for n in saved if n in configs]
+            for n in configs:
+                if n not in order:
+                    order.append(n)
+        except Exception:
+            pass
+    else:
+        layout_obj = AppLayout(user_id=current_user.id, layout=json.dumps(order))
+        db.session.add(layout_obj)
+        db.session.commit()
+
+    ordered_configs = [
+        {
+            'name': n,
+            'display': configs[n]['metadata'].get('name', n.capitalize()),
+            'url': url_for('user.task_detail', task_type=n)
+        } for n in order
+    ]
+
     tasks_query = Task.query.filter_by(
         user_id=current_user.id,
         archived=False
@@ -84,7 +108,7 @@ def dashboard():
         if html_file:
             files = [f for f in files if f != html_file]
         tasks_data.append({'task': t, 'files': files, 'html_file': html_file})
-    return render_template('dashboard.html', tasks=tasks_data, configs=configs)
+    return render_template('dashboard.html', tasks=tasks_data, ordered_apps=ordered_configs)
 
 
 
@@ -192,3 +216,22 @@ def delete_task(task_id):
     db.session.commit()
     flash('Task deleted')
     return redirect(url_for('user.dashboard'))
+
+
+@user_bp.route('/dashboard/save_layout', methods=['POST'], endpoint='save_layout')
+@login_required
+def save_layout():
+    if current_user.is_admin:
+        abort(403)
+    data = request.get_json(silent=True) or {}
+    layout = data.get('layout')
+    if not isinstance(layout, list):
+        abort(400)
+    layout_obj = AppLayout.query.filter_by(user_id=current_user.id).first()
+    if not layout_obj:
+        layout_obj = AppLayout(user_id=current_user.id, layout=json.dumps(layout))
+        db.session.add(layout_obj)
+    else:
+        layout_obj.layout = json.dumps(layout)
+    db.session.commit()
+    return {'status': 'ok'}
