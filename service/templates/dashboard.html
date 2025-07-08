@@ -25,14 +25,9 @@
   const rows = {{ ordered_rows|tojson }};
   const grid = document.getElementById('app-grid');
 
-  function createRow(apps = [], placeholder = false) {
+  function createRow(apps = []) {
     const rowDiv = document.createElement('div');
     rowDiv.className = 'app-row';
-    if (placeholder) {
-      rowDiv.classList.add('placeholder-row');
-      rowDiv.dataset.placeholder = 'true';
-      rowDiv.textContent = 'Drag app here to start a new row';
-    }
       apps.forEach((item) => {
         const card = document.createElement('a');
         card.className = 'app-card';
@@ -50,13 +45,12 @@
     rows.forEach((apps) => {
       grid.appendChild(createRow(apps));
     });
-    grid.appendChild(createRow([], true));
     colorRows();
   }
 
   function colorRows(){
     const classes = ['row-color-0','row-color-1','row-color-2','row-color-3'];
-    Array.from(grid.children).filter(r=>!r.dataset.placeholder).forEach((rowDiv,rowIdx)=>{
+    Array.from(grid.children).forEach((rowDiv,rowIdx)=>{
       Array.from(rowDiv.children).forEach(card=>{
         classes.forEach(c=>card.classList.remove(c));
         card.classList.add(classes[rowIdx%classes.length]);
@@ -65,21 +59,8 @@
   }
 
   function saveOrder(){
-    const placeholder = grid.querySelector('[data-placeholder]');
-      if (placeholder && placeholder.children.length > 0) {
-        placeholder.classList.remove('placeholder-row');
-        placeholder.removeAttribute('data-placeholder');
-        Array.from(placeholder.childNodes)
-          .filter(n => n.nodeType === Node.TEXT_NODE)
-          .forEach(n => n.remove());
-        new Sortable(placeholder, { group: 'apps', animation: 150, onEnd: saveOrder });
-        grid.appendChild(createRow([], true));
-    } else if (!placeholder) {
-      grid.appendChild(createRow([], true));
-    }
 
     const layout = Array.from(grid.children)
-      .filter(r => !r.dataset.placeholder)
       .map(rowDiv => Array.from(rowDiv.children).map(card => card.dataset.name));
     fetch('{{ url_for('user.save_layout') }}',{
       method:'POST',
