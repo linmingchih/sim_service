@@ -33,14 +33,14 @@
       rowDiv.dataset.placeholder = 'true';
       rowDiv.textContent = 'Drag app here to start a new row';
     }
-    apps.forEach((item) => {
-      const card = document.createElement('a');
-      card.className = 'btn btn-primary app-card';
-      card.dataset.name = item.name;
-      card.href = item.url;
-      card.textContent = `${item.display} App`;
-      rowDiv.appendChild(card);
-    });
+      apps.forEach((item) => {
+        const card = document.createElement('a');
+        card.className = 'app-card';
+        card.dataset.name = item.name;
+        card.href = item.url;
+        card.textContent = `${item.display} App`;
+        rowDiv.appendChild(card);
+      });
     new Sortable(rowDiv, { group: 'apps', animation: 150, onEnd: saveOrder });
     return rowDiv;
   }
