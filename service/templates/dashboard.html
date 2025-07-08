@@ -25,42 +25,68 @@
   const rows = {{ ordered_rows|tojson }};
   const grid = document.getElementById('app-grid');
 
+  function createCard(item){
+    const card = document.createElement('a');
+    card.className = 'app-card';
+    card.dataset.name = item.name;
+    card.href = item.url;
+    card.textContent = `${item.display} App`;
+    return card;
+  }
+
+  function attachSortable(rowDiv){
+    new Sortable(rowDiv, { group: 'apps', animation: 150, onEnd: saveOrder });
+  }
+
   function createRow(apps = []) {
     const rowDiv = document.createElement('div');
     rowDiv.className = 'app-row';
-      apps.forEach((item) => {
-        const card = document.createElement('a');
-        card.className = 'app-card';
-        card.dataset.name = item.name;
-        card.href = item.url;
-        card.textContent = `${item.display} App`;
-        rowDiv.appendChild(card);
-      });
-    new Sortable(rowDiv, { group: 'apps', animation: 150, onEnd: saveOrder });
+    apps.forEach(item => rowDiv.appendChild(createCard(item)));
+    attachSortable(rowDiv);
+    return rowDiv;
+  }
+
+  function createPlaceholderRow(){
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'placeholder-row';
+    rowDiv.textContent = 'Drop here to create new row';
+    new Sortable(rowDiv, {
+      group:'apps',
+      animation:150,
+      onAdd:(evt)=>{
+        rowDiv.textContent = '';
+        rowDiv.className = 'app-row';
+        attachSortable(rowDiv);
+        saveOrder();
+        grid.appendChild(createPlaceholderRow());
+      }
+    });
     return rowDiv;
   }
 
   function renderGrid() {
     grid.innerHTML = '';
-    rows.forEach((apps) => {
-      grid.appendChild(createRow(apps));
-    });
+    rows.forEach(apps => grid.appendChild(createRow(apps)));
+    grid.appendChild(createPlaceholderRow());
     colorRows();
   }
 
   function colorRows(){
     const classes = ['row-color-0','row-color-1','row-color-2','row-color-3'];
-    Array.from(grid.children).forEach((rowDiv,rowIdx)=>{
+    let rowIdx = 0;
+    Array.from(grid.children).forEach(rowDiv=>{
+      if(!rowDiv.classList.contains('app-row')) return;
       Array.from(rowDiv.children).forEach(card=>{
         classes.forEach(c=>card.classList.remove(c));
         card.classList.add(classes[rowIdx%classes.length]);
       });
+      rowIdx++;
     });
   }
 
   function saveOrder(){
-
     const layout = Array.from(grid.children)
+      .filter(rowDiv => rowDiv.classList.contains('app-row'))
       .map(rowDiv => Array.from(rowDiv.children).map(card => card.dataset.name));
     fetch('{{ url_for('user.save_layout') }}',{
       method:'POST',
