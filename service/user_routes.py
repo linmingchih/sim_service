@@ -74,27 +74,34 @@ def dashboard():
         return redirect(url_for('admin.admin_tasks'))
     configs = load_config()
     layout_obj = AppLayout.query.filter_by(user_id=current_user.id).first()
-    order = list(configs.keys())
+    layout_names = [list(configs.keys())]
     if layout_obj:
         try:
             saved = json.loads(layout_obj.layout)
-            order = [n for n in saved if n in configs]
+            if saved and isinstance(saved[0], list):
+                layout_names = [[n for n in row if n in configs] for row in saved]
+            else:
+                layout_names = [[n for n in saved if n in configs]]
             for n in configs:
-                if n not in order:
-                    order.append(n)
+                if not any(n in row for row in layout_names):
+                    layout_names[-1].append(n)
         except Exception:
             pass
     else:
-        layout_obj = AppLayout(user_id=current_user.id, layout=json.dumps(order))
+        layout_obj = AppLayout(user_id=current_user.id, layout=json.dumps(list(configs.keys())))
         db.session.add(layout_obj)
         db.session.commit()
 
-    ordered_configs = [
-        {
-            'name': n,
-            'display': configs[n]['metadata'].get('name', n.capitalize()),
-            'url': url_for('user.task_detail', task_type=n)
-        } for n in order
+    ordered_rows = [
+        [
+            {
+                'name': n,
+                'display': configs[n]['metadata'].get('name', n.capitalize()),
+                'url': url_for('user.task_detail', task_type=n)
+            }
+            for n in row
+        ]
+        for row in layout_names
     ]
 
     tasks_query = Task.query.filter_by(
@@ -108,7 +115,7 @@ def dashboard():
         if html_file:
             files = [f for f in files if f != html_file]
         tasks_data.append({'task': t, 'files': files, 'html_file': html_file})
-    return render_template('dashboard.html', tasks=tasks_data, ordered_apps=ordered_configs)
+    return render_template('dashboard.html', tasks=tasks_data, ordered_rows=ordered_rows)
 
 
 
@@ -227,11 +234,17 @@ def save_layout():
     layout = data.get('layout')
     if not isinstance(layout, list):
         abort(400)
+    # allow nested lists representing rows
+    if layout and not isinstance(layout[0], list):
+        layout_to_save = layout
+    else:
+        layout_to_save = [row if isinstance(row, list) else [] for row in layout]
+
     layout_obj = AppLayout.query.filter_by(user_id=current_user.id).first()
     if not layout_obj:
-        layout_obj = AppLayout(user_id=current_user.id, layout=json.dumps(layout))
+        layout_obj = AppLayout(user_id=current_user.id, layout=json.dumps(layout_to_save))
         db.session.add(layout_obj)
     else:
-        layout_obj.layout = json.dumps(layout)
+        layout_obj.layout = json.dumps(layout_to_save)
     db.session.commit()
     return {'status': 'ok'}

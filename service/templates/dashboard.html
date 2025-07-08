@@ -22,38 +22,49 @@
 <div id="app-grid" class="mb-4"></div>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
-  const apps = {{ ordered_apps|tojson }};
+  const rows = {{ ordered_rows|tojson }};
   const grid = document.getElementById('app-grid');
+
   function renderGrid() {
     grid.innerHTML = '';
-    apps.forEach((item) => {
-      const card = document.createElement('div');
-      card.className = 'app-card';
-      card.dataset.name = item.name;
-      card.innerHTML = `<a href="${item.url}" class="stretched-link">${item.display} App</a>`;
-      grid.appendChild(card);
+    rows.forEach((apps,rowIndex) => {
+      const rowDiv = document.createElement('div');
+      rowDiv.className = 'app-row';
+      apps.forEach((item) => {
+        const card = document.createElement('div');
+        card.className = 'app-card';
+        card.dataset.name = item.name;
+        card.innerHTML = `<a href="${item.url}" class="stretched-link">${item.display} App</a>`;
+        rowDiv.appendChild(card);
+      });
+      grid.appendChild(rowDiv);
+      new Sortable(rowDiv,{group:'apps',animation:150,onEnd:saveOrder});
     });
     colorRows();
   }
+
   function colorRows(){
-    const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
     const classes = ['row-color-0','row-color-1','row-color-2','row-color-3'];
-    Array.from(grid.children).forEach((el,i)=>{
-      classes.forEach(c=>el.classList.remove(c));
-      const row = Math.floor(i/cols)%classes.length;
-      el.classList.add(classes[row]);
+    Array.from(grid.children).forEach((rowDiv,rowIdx)=>{
+      Array.from(rowDiv.children).forEach(card=>{
+        classes.forEach(c=>card.classList.remove(c));
+        card.classList.add(classes[rowIdx%classes.length]);
+      });
     });
   }
+
   function saveOrder(){
-    const order = Array.from(grid.children).map(el=>el.dataset.name);
+    const layout = Array.from(grid.children).map(rowDiv =>
+      Array.from(rowDiv.children).map(card=>card.dataset.name)
+    );
     fetch('{{ url_for('user.save_layout') }}',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({layout:order})
+      body:JSON.stringify({layout:layout})
     });
     colorRows();
   }
-  new Sortable(grid,{animation:150,onEnd:saveOrder});
+
   window.addEventListener('resize',colorRows);
   renderGrid();
 </script>
