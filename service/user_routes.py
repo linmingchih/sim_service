@@ -80,6 +80,8 @@ def dashboard():
     tasks_data = []
     for t in tasks_query:
         files = json.loads(t.result_files) if t.result_files else []
+        if t.task_type == 'layer_viewer':
+            files = [f for f in files if not f.lower().endswith('.csv') and not f.lower().endswith('.aedb.zip')]
         html_file = next((f for f in files if f.lower().endswith('.html')), None)
         tasks_data.append({'task': t, 'files': files, 'html_file': html_file})
     return render_template('dashboard.html', tasks=tasks_data, configs=configs)
@@ -100,6 +102,8 @@ def dashboard_jobs():
     tasks_data = []
     for t in tasks_query:
         files = json.loads(t.result_files) if t.result_files else []
+        if t.task_type == 'layer_viewer':
+            files = [f for f in files if not f.lower().endswith('.csv') and not f.lower().endswith('.aedb.zip')]
         html_file = next((f for f in files if f.lower().endswith('.html')), None)
         tasks_data.append({'task': t, 'files': files, 'html_file': html_file})
     return render_template('_jobs_table.html', tasks=tasks_data, configs=configs)
