@@ -33,20 +33,18 @@ th, td {
 }
 
 .app-card {
-    padding: 1rem;
-    border-radius: 0.5rem;
+    display: block;
     cursor: move;
-    position: relative;
-    text-align: center;
-    color: #212529;
-    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.app-card a {
-    text-decoration: none;
-    color: inherit;
-    font-weight: bold;
+.placeholder-row {
+    min-height: 3rem;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6c757d;
+    font-style: italic;
 }
 
 .row-color-0 { background-color: #e3f2fd; }
