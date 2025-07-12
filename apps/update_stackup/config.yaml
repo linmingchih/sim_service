@@ -1,0 +1,9 @@
+venv_python: python
+script: runner.py
+parameters:
+  aedb_zip:
+    label: AEDB Zip
+    type: file
+  xlsx:
+    label: Stackup Excel
+    type: file

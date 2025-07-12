@@ -1,0 +1,4 @@
+{
+  "name": "ReadPCB",
+  "description": "Convert .brd file to AEDB and export stackup"
+}
