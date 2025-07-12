@@ -54,7 +54,9 @@ def main(brd_file):
     edb_name = 'board.aedb'
     edb = Edb(brd_file, edbversion='2024.1')
     export_stackup(edb, 'stackup.xlsx')
-    edb.save_edb()
+    # Save the project inside the current working directory so it can be
+    # included in the output files instead of writing next to the source ``.brd``.
+    edb.save_edb_as(edb_name)
     edb.close_edb()
     zip_name = 'board_aedb.zip'
     with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as z:
