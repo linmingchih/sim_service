@@ -1,7 +1,0 @@
-venv_python: python
-script: runner.py
-parameters:
-  depth:
-    label: Depth
-    type: number
-    min: 0
