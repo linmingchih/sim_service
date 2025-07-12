@@ -78,7 +78,12 @@ def main(aedb_zip, xlsx_file):
     with tempfile.TemporaryDirectory() as tmp:
         with zipfile.ZipFile(aedb_zip) as z:
             z.extractall(tmp)
-        aedb_dir = next(p for p in os.listdir(tmp) if p.endswith('.aedb'))
+        aedb_dirs = [p for p in os.listdir(tmp) if p.endswith('.aedb')]
+        if not aedb_dirs:
+            raise FileNotFoundError(
+                'No .aedb folder found in the provided zip archive.'
+            )
+        aedb_dir = aedb_dirs[0]
         aedb_path = os.path.join(tmp, aedb_dir)
         shutil.copy(xlsx_file, os.path.join(tmp, 'stackup.xlsx'))
         apply_xlsx(os.path.join(tmp, 'stackup.xlsx'), aedb_path)
