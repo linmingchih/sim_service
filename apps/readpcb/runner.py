@@ -92,9 +92,9 @@ tr:nth-child(odd) {{
         f.write(html)
 
 
-def main(brd_file):
+def main(brd_file, edb_version):
     edb_name = 'board.aedb'
-    edb = Edb(brd_file, edbversion='2024.1')
+    edb = Edb(brd_file, edbversion=edb_version)
     export_stackup(edb, 'stackup.xlsx')
     # Save the project inside the current working directory so it can be
     # included in the output files instead of writing next to the source ``.brd``.
@@ -114,5 +114,6 @@ def main(brd_file):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Convert BRD to AEDB and export stackup.')
     parser.add_argument('--brd', required=True, help='Input BRD file')
+    parser.add_argument('--edbversion', default='2025.1', help='AEDT version')
     args = parser.parse_args()
-    main(args.brd)
+    main(args.brd, args.edbversion)
