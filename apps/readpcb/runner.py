@@ -39,14 +39,56 @@ def export_stackup(edb_obj, xlsx_path):
 
 
 def table_html(xlsx_path, html_path):
+    """Generate a styled HTML table from the stackup Excel sheet."""
     wb = openpyxl.load_workbook(xlsx_path)
     ws = wb["Stackup"]
+
     rows = []
-    for r in ws.iter_rows(values_only=True):
-        cells = ''.join(f"<td>{c}</td>" for c in r)
+    for idx, r in enumerate(ws.iter_rows(values_only=True)):
+        tag = "th" if idx == 0 else "td"
+        cells = "".join(f"<{tag}>{c}</{tag}>" for c in r)
         rows.append(f"<tr>{cells}</tr>")
-    html = """<html><body><table border='1'>{}</table></body></html>""".format(''.join(rows))
-    with open(html_path, 'w') as f:
+
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+<meta charset='UTF-8'>
+<style>
+html, body {{
+  height: 100%;
+  margin: 0;
+}}
+body {{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f8f9fa;
+}}
+table {{
+  border-collapse: collapse;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}}
+th, td {{
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: center;
+}}
+tr:nth-child(even) {{
+  background-color: #d0f0ff;
+}}
+tr:nth-child(odd) {{
+  background-color: #d0ffd6;
+}}
+</style>
+</head>
+<body>
+<table>
+{''.join(rows)}
+</table>
+</body>
+</html>"""
+
+    with open(html_path, "w", encoding="utf-8") as f:
         f.write(html)
 
 
