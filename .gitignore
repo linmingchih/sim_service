@@ -3,3 +3,6 @@ __pycache__/
 outputs/
 app.db
 *.log
+venv
+.gitignore
+app_registry.json
