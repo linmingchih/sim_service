@@ -1,0 +1,6 @@
+venv_python: python
+script: runner.py
+parameters:
+  brd:
+    label: BRD File
+    type: file
