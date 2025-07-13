@@ -9,6 +9,46 @@ from openpyxl import Workbook
 from pyedb import Edb
 
 
+def export_stackup(edb_obj, xlsx_path):
+    """Export the current stackup to an Excel file."""
+    data = []
+    for layer_name, layer in edb_obj.stackup.stackup_layers.items():
+        m = edb_obj.materials.materials[layer.material]
+        if layer.type == 'signal':
+            permittivity = ''
+            loss_tangent = ''
+            conductivity = m.conductivity
+        else:
+            permittivity = m.permittivity
+            loss_tangent = m.dielectric_loss_tangent
+            conductivity = ''
+        thickness_mm = layer.thickness * 1000.0
+        data.append([
+            layer_name,
+            layer.type,
+            thickness_mm,
+            permittivity,
+            loss_tangent,
+            conductivity,
+        ])
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Stackup"
+    header = [
+        'Layer Name',
+        'Type',
+        'Thickness (mm)',
+        'Permittivity',
+        'Loss Tangent',
+        'Conductivity (S/m)',
+    ]
+    ws.append(header)
+    for row in data:
+        ws.append(row)
+    wb.save(xlsx_path)
+
+
 
 
 def apply_xlsx(xlsx_path, edb_path, version):
@@ -112,6 +152,7 @@ def main(aedb_zip, xlsx_file, version):
         aedb_path = os.path.join(tmp, aedb_dir)
         shutil.copy(xlsx_file, os.path.join(tmp, 'stackup.xlsx'))
         apply_xlsx(os.path.join(tmp, 'stackup.xlsx'), aedb_path, version)
+        export_stackup(Edb(aedb_path, edbversion=version), os.path.join(tmp, 'updated.xlsx'))
 
         output_zip = 'updated_aedb.zip'
         with zipfile.ZipFile(output_zip, 'w', zipfile.ZIP_DEFLATED) as out:
