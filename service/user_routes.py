@@ -217,7 +217,10 @@ def delete_task(task_id):
     output_dir = os.path.join(base_dir, 'outputs', str(task_id))
     if os.path.exists(output_dir):
         import shutil
-        shutil.rmtree(output_dir)
+        try:
+            shutil.rmtree(output_dir)
+        except Exception as exc:  # pragma: no cover - best effort cleanup
+            current_app.logger.warning("Failed to remove %s: %s", output_dir, exc)
     task.archived = True
     task.result_files = json.dumps([])
     db.session.commit()
