@@ -129,7 +129,7 @@ tr:nth-child(odd) {{
         f.write(html)
 
 
-def main(aedb_zip, xlsx_file):
+def main(aedb_zip, xlsx_file, version):
     with tempfile.TemporaryDirectory() as tmp:
         with zipfile.ZipFile(aedb_zip) as z:
             z.extractall(tmp)
@@ -141,7 +141,7 @@ def main(aedb_zip, xlsx_file):
         aedb_dir = aedb_dirs[0]
         aedb_path = os.path.join(tmp, aedb_dir)
         shutil.copy(xlsx_file, os.path.join(tmp, 'stackup.xlsx'))
-        apply_xlsx(os.path.join(tmp, 'stackup.xlsx'), aedb_path)
+        apply_xlsx(os.path.join(tmp, 'stackup.xlsx'), aedb_path, version)
         export_stackup(Edb(aedb_path, edbversion='2024.1'), os.path.join(tmp, 'updated.xlsx'))
         output_zip = 'updated_aedb.zip'
         with zipfile.ZipFile(output_zip, 'w', zipfile.ZIP_DEFLATED) as out:
@@ -159,5 +159,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Update stackup from Excel file.')
     parser.add_argument('--aedb_zip', required=True, help='Zipped AEDB')
     parser.add_argument('--xlsx', required=True, help='Stackup Excel file')
+    parser.add_argument('--version', default='2025.1', help='AEDT version')
     args = parser.parse_args()
-    main(args.aedb_zip, args.xlsx)
+    main(args.aedb_zip, args.xlsx, args.version)

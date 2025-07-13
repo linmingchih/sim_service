@@ -7,3 +7,12 @@ parameters:
   xlsx:
     label: Stackup Excel
     type: file
+  version:
+    label: AEDT Version
+    type: select
+    options:
+      "2024.1": "2024.1"
+      "2024.2": "2024.2"
+      "2025.1": "2025.1"
+      "2025.2": "2025.2"
+    default: "2025.1"
