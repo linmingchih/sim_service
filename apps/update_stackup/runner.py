@@ -40,26 +40,39 @@ def export_stackup(edb_obj, xlsx_path):
     wb.save(xlsx_path)
 
 
-def apply_xlsx(xlsx_path, edb_path):
-    edb = Edb(edb_path, edbversion='2024.1')
+
+def apply_xlsx(xlsx_path, edb_path, version):
+    edb = Edb(edb_path, edbversion=version)
     wb = openpyxl.load_workbook(xlsx_path)
     ws = wb["Stackup"]
+    
+    material_dic = {}
     for row in ws.iter_rows(min_row=2, values_only=True):
         layer_name, layer_type, thickness_mm, permittivity, loss_tangent, conductivity = row
         thickness_m = float(thickness_mm) / 1000.0
         edb.stackup.stackup_layers[layer_name].thickness = thickness_m
-        mat_name = edb.stackup.stackup_layers[layer_name].material
-        material = edb.materials.materials[mat_name]
-        if layer_type != 'signal':
-            if permittivity != '':
-                material.permittivity = float(permittivity)
-            if loss_tangent != '':
-                material.dielectric_loss_tangent = float(loss_tangent)
+    
+        if layer_type == "signal":
+            if conductivity not in material_dic:
+                name = f'metal_{conductivity}'
+                mat = edb.materials.add_conductor_material(name, conductivity)
+                material_dic[conductivity] = mat
+                
+            edb.stackup.stackup_layers[layer_name].material = material_dic[conductivity].name
         else:
-            if conductivity != '':
-                material.conductivity = float(conductivity)
-    edb.save_edb()
+            if (permittivity, loss_tangent) not in material_dic:
+                name = f'dielectric_{permittivity}_{loss_tangent}'
+                mat = edb.materials.add_dielectric_material(name, 
+                                                            permittivity, 
+                                                            loss_tangent)
+                material_dic[(permittivity, loss_tangent)] = mat
+            
+            edb.stackup.stackup_layers[layer_name].material = material_dic[(permittivity, loss_tangent)].name
+    
+    edb.save_edb_as('modified.aedb')
     edb.close_edb()
+
+
 
 
 def table_html(xlsx_path, html_path):
