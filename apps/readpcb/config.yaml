@@ -5,7 +5,7 @@ parameters:
     label: BRD File
     type: file
   edbversion:
-    label: AEDT Version
+    label: PyEDB Version
     type: select
     options:
       "2024.1": "2024.1"
