@@ -13,3 +13,6 @@ parameters:
       "2025.1": "2025.1"
       "2025.2": "2025.2"
     default: "2025.1"
+result_keep:
+  - board_aedb.zip
+  - stackup.xlsx
