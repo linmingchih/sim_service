@@ -16,3 +16,5 @@ parameters:
       "2025.1": "2025.1"
       "2025.2": "2025.2"
     default: "2025.1"
+result_keep:
+  - updated_aedb.zip
