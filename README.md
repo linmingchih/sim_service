@@ -124,7 +124,7 @@ flask-task-platform/
 - **Sparams**：上傳任意埠數的 Touchstone 檔案（副檔名 `.sNp`，`N` 為任意整數），於 `outputs/<task_id>/` 產生各組 S-parameter 圖檔與 `index.html`。`index.html` 中的搜尋框支援輸入正規表示式過濾檢視的圖檔
 - **Microstrip**：模擬微帶傳輸線並輸出 `microstrip.png`，需要安裝 `pyaedt` 並連線 ANSYS Electronics Desktop
 - **ReadPCB**：上傳 `.brd` 產生壓縮後的 AEDB 與 `stackup.xlsx`，`result.html` 顯示堆疊表
-- **UpdateStackup**：上傳 AEDB 壓縮檔與修改後的 `xlsx`，回傳更新後的 AEDB 壓縮檔並以 HTML 呈現新的堆疊表
+- **UpdateStackup**：上傳 AEDB 壓縮檔與修改後的 `xlsx`，可選擇 AEDT 版本，回傳更新後的 AEDB 壓縮檔並以 HTML 呈現新的堆疊表
 
 ## 管理者功能
 - 設定管理者帳號：手動在資料庫中將 `User.is_admin` 欄位設為 `True`
